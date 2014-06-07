@@ -7,6 +7,7 @@ class ASTNode:
         self.children = []
         self.data = data
         self.right_sibling = None
+        self.parent = None
         self.leftmost_sibling = self
         self.node_id = ASTNode.count
         ASTNode.count += 1
@@ -14,6 +15,7 @@ class ASTNode:
     def add_right_sibling(self, node):
         self.right_sibling = node
         node.leftmost_sibling = self.leftmost_sibling
+        node.parent = self.parent
         
 class IntNode(ASTNode):
 

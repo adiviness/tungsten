@@ -19,6 +19,7 @@ def p_block(p):
     node = p[1]
     while node != None:
         p[0].children.append(node)
+        node.parent = p[0]
         node = node.right_sibling
 
 def p_statements(p):
@@ -61,6 +62,10 @@ def p_val(p):
     else:
         print("error", type(p[1]))
 
+
+def p_error(p):
+    print("Parse Error at %s" % p.value, file=sys.stderr)
+    exit(1)
 
 def parse():
     parser = yacc.yacc()
