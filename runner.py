@@ -1,8 +1,16 @@
 
-from parser import *
+from parser import parse
 
-def main():
-    root = parse()
+
+class Runner:
+    
+    def __init__(self):
+        self.root = None
+        
+    def run(self):
+        self.root = parse()
+
 
 if __name__ == "__main__":
-    main()
+    runner = Runner()
+    runner.run()
