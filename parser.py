@@ -47,21 +47,38 @@ def p_declaration(p):
     p[0] = AssignNode([id_, type_, p[4]])
 
 def p_expression(p):
-   '''
-   expression : val
-   '''
-   p[0] = p[1]
+    '''
+    expression : val
+    expression : expression binary_op val
+    '''
+    if len(p) == 2:
+        p[0] = p[1]
+    elif len(p) == 4:
+        p[2].children.append(p[1])
+        p[1].parent = p[2]
+        p[1].add_right_sibling(p[3])
+        p[2].children.append(p[3])
+        p[0] = p[2]
+
+
+def p_binary_op(p):
+    '''
+    binary_op : PLUS
+    '''
+    if p[1] == '+':
+        p[0] = PlusNode()
    
 def p_val(p):
     '''
     val : INTEGER
         | FLOAT
+        | IDENTIFIER
     '''
+
     if type(p[1]) == int:
         p[0] = IntNode(p[1])
     else:
-        print("error", type(p[1]))
-
+        p[0] = IDNode(p[1])
 
 def p_error(p):
     print("Parse Error at %s" % p.value, file=sys.stderr)

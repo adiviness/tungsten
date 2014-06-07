@@ -15,7 +15,11 @@ tokens = [
     "IDENTIFIER",
     "COMMENT",
     "INTEGER",
-    "FLOAT"
+    "FLOAT",
+    "PLUS",
+    "MINUS",
+    "MULTIPLY",
+    "DIVIDE"
 ]
 
 tokens += list(reserved.values())
@@ -27,6 +31,10 @@ t_R_PAREN = r'\)'
 t_ASSIGN = r'='
 t_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_]*'
 t_FLOAT = r'\d+\.\d+'
+t_PLUS = r'\+'
+t_MINUS = r'\-'
+t_MULTIPLY = r'\*'
+t_DIVIDE = r'\/'
 
 def t_INTEGER(t):
     r'\d+'

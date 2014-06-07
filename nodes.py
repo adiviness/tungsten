@@ -43,3 +43,12 @@ class BlockNode(ASTNode):
 
     def __init__(self):
         super().__init__()
+
+class PlusNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+
+
+        

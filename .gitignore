@@ -2,3 +2,4 @@
 *.out
 parsetab.py
 output.*
+*.w

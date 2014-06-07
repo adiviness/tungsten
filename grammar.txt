@@ -8,9 +8,20 @@ statments : statement statements
 
 statement : declaration
 
-declaration : ID ID ASSIGN expression
+declaration : IDENTIFIER IDENTIFIER ASSIGN expression
 
 expression : val
+    | expression binary_op val
+    | unary_op val
+
+binary_op : PLUS
+    | MINUS
+    | MULTIPLY
+    | DIVIDENTIFIERE
+
+unary_op : MINUS
+    | NOT
 
 val : INTEGER
     | FLOAT
+    | IDENTIFIER
