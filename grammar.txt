@@ -9,6 +9,7 @@ statments : statement statements
 statement : declaration
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
+    | IDENTIFIER ASSIGN expression
 
 expression : val
     | expression binary_op val

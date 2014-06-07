@@ -41,10 +41,15 @@ def p_statement(p):
 def p_declaration(p):
     '''
     declaration : IDENTIFIER IDENTIFIER ASSIGN expression
+        | IDENTIFIER ASSIGN expression
     '''
-    id_ = IDNode(p[1])
-    type_  = TypeNode(p[2])
-    p[0] = AssignNode([id_, type_, p[4]])
+    if len(p) == 5:
+        id_ = IDNode(p[1])
+        type_  = TypeNode(p[2])
+        p[0] = AssignNode([id_, type_, p[4]])
+    elif len(p) == 4:
+        id_ = IDNode(p[1])
+        p[0] = AssignNode([id_, p[3]])
 
 def p_expression(p):
     '''
