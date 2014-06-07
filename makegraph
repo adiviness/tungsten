@@ -1,0 +1,2 @@
+
+cat $1 | python2 parse-tree-to-graphvis.py | dot -Tpng -o $1.png
