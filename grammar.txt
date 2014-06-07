@@ -1,0 +1,16 @@
+
+start : block $
+
+block : statements
+
+statments : statement statements
+    |
+
+statement : declaration
+
+declaration : ID ID ASSIGN expression
+
+expression : val
+
+val : INTEGER
+    | FLOAT
