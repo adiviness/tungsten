@@ -26,8 +26,12 @@ t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_ASSIGN = r'='
 t_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_INTEGER = r'\d+'
 t_FLOAT = r'\d+\.\d+'
+
+def t_INTEGER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
 
 def t_COMMENT(t):
     r'\#.*'

@@ -58,6 +58,8 @@ def p_val(p):
     '''
     if type(p[1]) == int:
         p[0] = IntNode(p[1])
+    else:
+        print("error", type(p[1]))
 
 
 def parse():
