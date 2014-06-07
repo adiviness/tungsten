@@ -31,7 +31,6 @@ class Runner:
     def _write_node_children(self, output_file, node):
         children_ids = map(lambda x: str(x.node_id), node.children)
         children_ids = ' '.join(children_ids)
-        print(children_ids)
         print(str(node.node_id), children_ids, file=output_file)
         for child in node.children:
             self._write_node_children(output_file, child)

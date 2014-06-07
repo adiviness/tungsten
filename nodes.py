@@ -49,6 +49,20 @@ class PlusNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class MinusNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class MultiplyNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class DivideNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
 
 
         

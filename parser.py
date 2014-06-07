@@ -64,9 +64,18 @@ def p_expression(p):
 def p_binary_op(p):
     '''
     binary_op : PLUS
+        | MINUS
+        | MULTIPLY
+        | DIVIDE
     '''
     if p[1] == '+':
         p[0] = PlusNode()
+    elif p[1] == '-':
+        p[0] = MinusNode()
+    elif p[1] == '*':
+        p[0] = MultiplyNode()
+    elif p[1] == '/':
+        p[0] = DivideNode()
    
 def p_val(p):
     '''
