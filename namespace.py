@@ -56,6 +56,7 @@ class Namespace:
                 word = word[1:]
             else:
                 return None
+        return node
 
         
         

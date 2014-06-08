@@ -46,6 +46,6 @@ class SymbolTable:
         
     def _normalize_symbol(self, symbol):
         if type(symbol) == str:
-            symbol = self.namespace.find_word(symbol)
+            symbol = self.namespace.find(symbol)
         return symbol
     

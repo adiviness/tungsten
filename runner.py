@@ -1,6 +1,8 @@
 
-from parser import parse
 import sys
+
+from parser import parse
+from semantic_checker import SemanticChecker
 
 
 class Runner:
@@ -8,9 +10,11 @@ class Runner:
     def __init__(self, output_file_prefix):
         self.root = None
         self.output_file_prefix = output_file_prefix
+        self.semantic_checker = SemanticChecker()
         
     def run(self):
         self.root = parse()
+        self.semantic_checker.build_symbol_table(self.root)
         self.pprint(self.root)
         self.write_graphing_data()
 
