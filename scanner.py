@@ -30,11 +30,15 @@ t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_ASSIGN = r'='
 t_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_FLOAT = r'\d+\.\d+'
 t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'\/'
+
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
 
 def t_INTEGER(t):
     r'\d+'
@@ -47,6 +51,7 @@ def t_COMMENT(t):
 
 def t_error(t):
     print("illegal character", t.value[0])
+    print(t.value)
     t.lexer.skip(1)
     
 lexer = lex.lex()

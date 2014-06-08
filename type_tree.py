@@ -37,6 +37,7 @@ class TypeTree:
         return nodeOne in pathTwo or nodeTwo in pathOne
 
     def generalize(self, one, two):
+        '''returns the more general of the provided type names'''
         nodeOne = self.find(one)
         nodeTwo = self.find(two)
         pathOne = nodeOne.path_to_root()
@@ -47,22 +48,25 @@ class TypeTree:
         
 
     def find(self, type_, node = None):
+        return_node = None
         if node == None:
             node = self.root
-        if type == node:
+        if type_ == node.type_name:
             return node
         else:
             for child in node.children:
-                self.find(type_, child)
-        return None
+                return_node = self.find(type_, child)
+        return return_node
             
 
 def get_default_type_tree():
     tree = TypeTree()
-    tree.root = TypeNode("Object")
-    node = TypeNode("Float")
-    tree.root.add_child(node)
-    node.add_child(TypeNode("Int"))
+    nodeOne = TypeNode("Int")
+    nodeTwo = TypeNode("Float")
+    nodeTwo.add_child(nodeOne)
+    nodeOne = TypeNode("Object")
+    nodeOne.add_child(nodeTwo)
+    tree.root = nodeOne
     return tree
                     
     

@@ -22,6 +22,11 @@ class IntNode(ASTNode):
     def __init__(self, value):
         super().__init__(value)
 
+class FloatNode(ASTNode):
+
+    def __init__(self, value):
+        super().__init__(value)
+
 class TypeNode(ASTNode):
 
     def __init__(self, type_):

@@ -58,15 +58,17 @@ class SemanticChecker:
             return self.symbol_table.get_type(node.data)
         elif type(node) == IntNode:
             return "Int"
+        elif type(node) == FloatNode:
+            return "Float"
         elif type(node) in [PlusNode, MinusNode, MultiplyNode, DivideNode]:
             left = self.get_type(node.children[0])
             right = self.get_type(node.children[1])
             if left == right:
                 return left
             elif self.type_tree.have_relation(left, right):
-                return type_tree.generalize(left, right)
+                return self.type_tree.generalize(left, right)
             else:
-                print("Type error! cannot convert %s to %s" % (right, left), file=sys.stderr)
+                print("Type error! cannot convert between %s and %s" % (right, left), file=sys.stderr)
                 exit(1)
 
     def check_type(self, one, two):

@@ -91,6 +91,8 @@ def p_val(p):
 
     if type(p[1]) == int:
         p[0] = IntNode(p[1])
+    elif type(p[1]) == float:
+        p[0] = FloatNode(p[1])
     else:
         p[0] = IDNode(p[1])
 
