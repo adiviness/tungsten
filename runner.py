@@ -3,6 +3,7 @@ import sys
 
 from parser import parse
 from semantic_checker import SemanticChecker
+from CGenerator import CGenerator
 
 
 class Runner:
@@ -17,6 +18,8 @@ class Runner:
         #self.semantic_checker.build_symbol_table(self.root)
         self.pprint(self.root)
         self.write_graphing_data()
+        cGenerator = CGenerator(self.root, self.output_file_prefix)
+        cGenerator.generate()
 
     def write_graphing_data(self):
         output_file = open("%s.out" % self.output_file_prefix, 'w')
