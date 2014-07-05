@@ -54,9 +54,12 @@ class CGenerator:
             print(";", file=output_file)
 
         elif type(node) in OP_NODES:
-            self.traverse(node.children[0], output_file, depth+1)
-            print(OP_NODE_SYMBOL[type(node)], end='', file=output_file)
-            if len(node.children) > 1:
+            if len(node.children) == 1:
+                print(OP_NODE_SYMBOL[type(node)], end='', file=output_file)
+                self.traverse(node.children[0], output_file, depth+1)
+            else:
+                self.traverse(node.children[0], output_file, depth+1)
+                print(OP_NODE_SYMBOL[type(node)], end='', file=output_file)
                 self.traverse(node.children[1], output_file, depth+1)
 
         elif type(node) == IfNode:
@@ -64,6 +67,10 @@ class CGenerator:
             self.traverse(node.children[0], output_file, depth)
             print(")", end='', file=output_file)
             self.traverse(node.children[1], output_file, depth)
+            # possible else statement
+            if len(node.children) == 3:
+                print("    "*depth, "else", sep='', end='', file=output_file)
+                self.traverse(node.children[2], output_file, depth)
         else:
             print(node.data, end='', file=output_file)
 
