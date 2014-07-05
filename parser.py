@@ -68,28 +68,7 @@ class Parser:
     def statement(self):
         print(self.tokens[0])
         if self.match(TokenType.IF):
-            # if statement
-            self.consume(TokenType.IF)
-            node = IfNode()
-            exp_node = self.expression()
-            self.consume(TokenType.COLON)
-            self.consume(TokenType.NEWLINE)
-            self.line_number += 1
-            self.consume(TokenType.INDENT)
-            block_node = self.block()
-            self.consume(TokenType.DEDENT)
-            node.give_child(exp_node)
-            node.give_child(block_node)
-            # possible else statement
-            if self.match(TokenType.ELSE):
-                self.consume(TokenType.ELSE)
-                self.consume(TokenType.COLON)
-                self.consume(TokenType.NEWLINE)
-                self.line_number += 1
-                self.consume(TokenType.INDENT)
-                block_node = self.block()
-                self.consume(TokenType.DEDENT)
-                node.give_child(block_node)
+            node = self.if_()
         else:
             node = self.declaration()
         # newline
@@ -97,7 +76,48 @@ class Parser:
             self.consume(TokenType.NEWLINE)
             self.line_number += 1
         return node
-        
+
+    def if_(self):
+        # if statement
+        self.consume(TokenType.IF)
+        node = IfNode()
+        top_node = node
+        exp_node = self.expression()
+        self.consume(TokenType.COLON)
+        self.consume(TokenType.NEWLINE)
+        self.line_number += 1
+        self.consume(TokenType.INDENT)
+        block_node = self.block()
+        self.consume(TokenType.DEDENT)
+        node.give_child(exp_node)
+        node.give_child(block_node)
+        # possible elif statements
+        while self.match(TokenType.ELIF):
+            self.consume(TokenType.ELIF)
+            elif_node = IfNode()
+            exp_node = self.expression()
+            self.consume(TokenType.COLON)
+            self.consume(TokenType.NEWLINE)
+            self.line_number += 1
+            self.consume(TokenType.INDENT)
+            block_node = self.block()
+            self.consume(TokenType.DEDENT)
+            elif_node.give_child(exp_node)
+            elif_node.give_child(block_node)
+            node.give_child(elif_node)
+            node = elif_node
+        # possible else statement
+        if self.match(TokenType.ELSE):
+            self.consume(TokenType.ELSE)
+            self.consume(TokenType.COLON)
+            self.consume(TokenType.NEWLINE)
+            self.line_number += 1
+            self.consume(TokenType.INDENT)
+            block_node = self.block()
+            self.consume(TokenType.DEDENT)
+            node.give_child(block_node)
+        return top_node
+
     def declaration(self):
         var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
         assign_node = AssignNode()

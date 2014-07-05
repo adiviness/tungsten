@@ -7,13 +7,18 @@ statments : statement statements
     |
 
 statement : declaration NEWLINE
-    | IF expression COLON NEWLINE INDENT block DEDENT
-    | IF expression COLON NEWLINE INDENT block DEDENT ELSE INDENT block DEDENT
     | NEWLINE
+    | if
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
 
+if : IF expression COLON NEWLINE INDENT block DEDENT elif
+    | IF expression COLON NEWLINE INDENT block DEDENT elif ELSE INDENT block DEDENT
+
+elif : ELIF expression COLON NEWLINE INDENT block DEDENT elif
+    |
+    
 expression : val
     | val binary_op expression
     | unary_op val
