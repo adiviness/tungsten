@@ -35,13 +35,14 @@ class CGenerator:
         print("#include <stdbool.h>", file=output_file)
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
-        print("int main()", file=output_file)
+        print("int main()", end='', file=output_file)
         self.traverse(self.root_node, output_file, 0)
         output_file.close()
 
     def traverse(self, node, output_file, depth):
         if type(node) == BlockNode:
-            print("    "*depth, "{", sep='', file=output_file)
+            #print("    "*depth, "{", sep='', file=output_file)
+            print(" {", file=output_file)
             for child in node.children:
                 self.traverse(child, output_file, depth+1)
         elif type(node) == AssignNode:
@@ -58,10 +59,15 @@ class CGenerator:
             if len(node.children) > 1:
                 self.traverse(node.children[1], output_file, depth+1)
 
+        elif type(node) == IfNode:
+            print("    "*depth, "if (", sep='', end='', file=output_file)
+            self.traverse(node.children[0], output_file, depth)
+            print(")", end='', file=output_file)
+            self.traverse(node.children[1], output_file, depth)
         else:
             print(node.data, end='', file=output_file)
 
         if type(node) == BlockNode:
             if depth == 0:
                 print("    return 0;", file=output_file)
-            print("    "*(depth-1), "}", sep='', file=output_file)
+            print("    "*(depth), "}", sep='', file=output_file)
