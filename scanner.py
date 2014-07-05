@@ -6,50 +6,63 @@ import re
 INDENT_AMOUNT = 2
 
 class TokenType(Enum):
-    TRUE = 1
-    FALSE = 2
-    NIL = 3
-    DEF = 4
-    AND = 5
-    OR = 6
-    L_PAREN = 7
-    R_PAREN = 8
-    ASSIGN = 9
-    IDENTIFIER = 10
-    COMMENT = 11
-    INTEGER = 12
-    FLOAT = 13
-    PLUS = 14
-    MINUS = 15
-    MULTIPLY = 16
-    DIVIDE = 17
-    NEWLINE = 18
-    IGNORE = 19
-    NOT = 20
-    INDENT = 21
-    DEDENT = 22
+    # language features
+    COMMENT = 1
+    INDENT = 2
+    DEDENT = 3
+    NEWLINE = 4
+    # keywords
+    TRUE = 5
+    FALSE = 6
+    NIL = 7
+    DEF = 8
+    AND = 9
+    OR = 10
+    NOT = 11 
+    IF = 12
+    ELIF = 13
+    ELSE = 14
+    # symbols
+    COLON = 15
+    L_PAREN = 16
+    R_PAREN = 17
+    ASSIGN = 18
+    PLUS = 19
+    MINUS = 20
+    MULTIPLY = 21
+    DIVIDE = 22
+    # built ins
+    IDENTIFIER = 23
+    INTEGER = 24
+    FLOAT = 25
+    # whitespace
+    IGNORE = 26
 
 matchers = {
-    TokenType.TRUE : r'true',
-    TokenType.FALSE : r'false',
-    TokenType.NIL : r'nil',
-    TokenType.DEF : r'def',
-    TokenType.AND : r'and',
-    TokenType.OR : r'or',
-    TokenType.NOT : r'not',
-    TokenType.L_PAREN : r'\(',
-    TokenType.R_PAREN : r'\)',
-    TokenType.ASSIGN : r'=',
-    TokenType.IDENTIFIER : r'[a-zA-Z_][a-zA-Z0-9_]*',
-    TokenType.COMMENT : r'#.*',
-    TokenType.INTEGER : r'\d+',
-    TokenType.FLOAT : r'\d+\.\d+',
-    TokenType.PLUS : r'\+',
-    TokenType.MINUS : r'\-',
-    TokenType.MULTIPLY : r'\*',
-    TokenType.DIVIDE : r'\/',
-    TokenType.NEWLINE : r'\n',
-    TokenType.IGNORE : r' '
+    TokenType.TRUE: r'true',
+    TokenType.FALSE: r'false',
+    TokenType.NIL: r'nil',
+    TokenType.DEF: r'def',
+    TokenType.AND: r'and',
+    TokenType.OR: r'or',
+    TokenType.NOT: r'not',
+    TokenType.IF: r'if',
+    TokenType.ELIF: r'elif',
+    TokenType.ELSE: r'else',
+    TokenType.COLON: r':',
+    TokenType.L_PAREN: r'\(',
+    TokenType.R_PAREN: r'\)',
+    TokenType.ASSIGN: r'=',
+    TokenType.IDENTIFIER: r'[a-zA-Z_][a-zA-Z0-9_]*',
+    TokenType.COMMENT: r'#.*',
+    TokenType.INTEGER: r'\d+',
+    TokenType.FLOAT: r'\d+\.\d+',
+    TokenType.PLUS: r'\+',
+    TokenType.MINUS: r'\-',
+    TokenType.MULTIPLY: r'\*',
+    TokenType.DIVIDE: r'\/',
+    TokenType.NEWLINE: r'\n',
+    TokenType.IGNORE: r' '
 }
 
 class Token():
@@ -103,7 +116,6 @@ class Scanner():
             if not found_match:
                 print("illegal character", text[0], file=sys.stderr)
                 exit(1)
-        print(self.tokens)
 
     def remove_ignore_tokens(self):
         self.tokens = list(filter(lambda x: x.kind != TokenType.IGNORE, self.tokens))

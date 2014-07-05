@@ -44,10 +44,14 @@ class Parser:
     def parse(self, tokens):
         self.line_number = 1 # reset line number
         self.tokens = tokens
-        self.root_node = BlockNode()
-        for node in self.statements():
-            self.root_node.give_child(node)
+        self.root_node = self.block()
 
+    def block(self):
+        block_node = BlockNode()
+        for node in self.statements():
+            block_node.give_child(node)
+        return block_node
+        
     def statements(self):
         statement_nodes = []
         while True:
@@ -56,15 +60,32 @@ class Parser:
                 self.line_number += 1
             if self.tokens == []:
                 break
+            if self.match(TokenType.DEDENT):
+                break
             statement_nodes.append(self.statement())
         return statement_nodes
 
     def statement(self):
-        decl_node = self.declaration()
+        print(self.tokens[0])
+        if self.match(TokenType.IF):
+            self.consume(TokenType.IF)
+            node = IfNode()
+            exp_node = self.expression()
+            self.consume(TokenType.COLON)
+            self.consume(TokenType.NEWLINE)
+            self.line_number += 1
+            self.consume(TokenType.INDENT)
+            block_node = self.block()
+            self.consume(TokenType.DEDENT)
+            node.give_child(exp_node)
+            node.give_child(block_node)
+        else:
+            node = self.declaration()
         # newline
-        self.consume(TokenType.NEWLINE)
-        self.line_number += 1
-        return decl_node
+        if self.match(TokenType.NEWLINE):
+            self.consume(TokenType.NEWLINE)
+            self.line_number += 1
+        return node
         
     def declaration(self):
         var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)

@@ -7,6 +7,8 @@ statments : statement statements
     |
 
 statement : declaration NEWLINE
+    | IF expression COLON NEWLINE INDENT block DEDENT
+    | IF expression COLON NEWLINE INDENT block DEDENT ELSE INDENT block DEDENT
     | NEWLINE
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression

@@ -103,4 +103,10 @@ class BoolNode(ASTNode):
     def __init__(self, bool_):
         super().__init__(bool_)
 
+class IfNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+
         
