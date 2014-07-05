@@ -3,6 +3,8 @@
 from enum import Enum
 import re
 
+INDENT_AMOUNT = 2
+
 class TokenType(Enum):
     TRUE = 1
     FALSE = 2
@@ -24,6 +26,8 @@ class TokenType(Enum):
     NEWLINE = 18
     IGNORE = 19
     NOT = 20
+    INDENT = 21
+    DEDENT = 22
 
 matchers = {
     TokenType.TRUE : r'true',
@@ -67,21 +71,39 @@ class Scanner():
         self.tokens = []
         self.matchers = {}
         for tokenType in TokenType:
+            if tokenType in [TokenType.INDENT, TokenType.DEDENT]:
+                continue
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
     def run(self):
+        indent = re.compile("((?:  )*)")
+        indent_level = 0
         while self.text != '':
             found_match = False
             for tokenType in TokenType:
+                if tokenType in [TokenType.INDENT, TokenType.DEDENT]:
+                    continue
                 match = self.matchers[tokenType].match(self.text)
                 if match != None:
                     self.tokens.append(Token(tokenType, match.group(0)))
                     self.text = self.text[len(match.group(0)):]
                     found_match = True
+                    # check for INDENT or DEDENT
+                    if tokenType == TokenType.NEWLINE:
+                        match = indent.match(self.text)
+                        new_indent_level = len(match.group(0)) / INDENT_AMOUNT
+                        self.text = self.text[len(match.group(0)):]
+                        while indent_level < new_indent_level:
+                            self.tokens.append(Token(TokenType.INDENT, '  '))
+                            indent_level += 1
+                        while indent_level > new_indent_level:
+                            self.tokens.append(Token(TokenType.DEDENT, '  '))
+                            indent_level -= 1
                     break
             if not found_match:
                 print("illegal character", text[0], file=sys.stderr)
                 exit(1)
+        print(self.tokens)
 
     def remove_ignore_tokens(self):
         self.tokens = list(filter(lambda x: x.kind != TokenType.IGNORE, self.tokens))
