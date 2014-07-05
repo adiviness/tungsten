@@ -14,7 +14,7 @@ class Runner:
         
     def run(self):
         self.root = parse()
-        self.semantic_checker.build_symbol_table(self.root)
+        #self.semantic_checker.build_symbol_table(self.root)
         self.pprint(self.root)
         self.write_graphing_data()
 

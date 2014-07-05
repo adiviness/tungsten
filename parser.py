@@ -59,11 +59,15 @@ def p_expression(p):
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 4:
+        print(p)
         p[2].children.append(p[1])
         p[1].parent = p[2]
         p[1].add_right_sibling(p[3])
         p[2].children.append(p[3])
         p[0] = p[2]
+    else:
+        print("error: bad expression")
+        exit(1)
 
 
 def p_binary_op(p):
@@ -72,27 +76,55 @@ def p_binary_op(p):
         | MINUS
         | MULTIPLY
         | DIVIDE
+        | AND
+        | OR
     '''
+    print(p[1])
     if p[1] == '+':
         p[0] = PlusNode()
+
     elif p[1] == '-':
         p[0] = MinusNode()
+
     elif p[1] == '*':
         p[0] = MultiplyNode()
+
     elif p[1] == '/':
         p[0] = DivideNode()
+
+    elif p[1] == 'and':
+        print("here and")
+        p[0] = AndNode()
+
+    elif p[1] == 'or':
+        p[0] = OrNode()
+    else:
+        print("error: no binary op found", file=sys.stderr)
+        exit(1)
    
 def p_val(p):
     '''
     val : INTEGER
         | FLOAT
+        | TRUE
+        | FALSE
         | IDENTIFIER
     '''
 
+    print(p[1])
     if type(p[1]) == int:
         p[0] = IntNode(p[1])
+
     elif type(p[1]) == float:
         p[0] = FloatNode(p[1])
+
+    elif p[1] == 'true':
+        print("here true")
+        p[0] = BoolNode(True)
+
+    elif p[1] == 'false':
+        p[0] = BoolNode(False)
+
     else:
         p[0] = IDNode(p[1])
 

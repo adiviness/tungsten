@@ -18,11 +18,16 @@ expression : val
 binary_op : PLUS
     | MINUS
     | MULTIPLY
-    | DIVIDENTIFIERE
+    | DIVIDE
+    | OR
+    | AND
+   
 
 unary_op : MINUS
     | NOT
 
 val : INTEGER
     | FLOAT
+    | TRUE
+    | FALSE
     | IDENTIFIER

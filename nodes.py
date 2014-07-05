@@ -69,5 +69,19 @@ class DivideNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class AndNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class OrNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class BoolNode(ASTNode):
+
+    def __init__(self, bool_):
+        super().__init__(bool_)
 
         

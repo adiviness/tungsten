@@ -66,6 +66,8 @@ def get_default_type_tree():
     nodeTwo.add_child(nodeOne)
     nodeOne = TypeNode("Object")
     nodeOne.add_child(nodeTwo)
+    nodeTwo = TypeNode("Bool")
+    nodeOne.add_child(nodeTwo)
     tree.root = nodeOne
     return tree
                     

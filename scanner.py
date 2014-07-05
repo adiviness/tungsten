@@ -5,7 +5,9 @@ reserved = {
     'true':'TRUE',
     'false': 'FALSE',
     'nil': 'NIL',
-    'def': 'DEFINE'
+    'def': 'DEFINE',
+    'and': 'AND',
+    'or': 'OR'
 }
 
 tokens = [

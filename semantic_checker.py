@@ -60,7 +60,7 @@ class SemanticChecker:
             return "Int"
         elif type(node) == FloatNode:
             return "Float"
-        elif type(node) in [PlusNode, MinusNode, MultiplyNode, DivideNode]:
+        elif type(node) in [PlusNode, MinusNode, MultiplyNode, DivideNode, AndNode, OrNode]:
             left = self.get_type(node.children[0])
             right = self.get_type(node.children[1])
             if left == right:
