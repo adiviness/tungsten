@@ -16,6 +16,20 @@ class ASTNode:
         self.right_sibling = node
         node.leftmost_sibling = self.leftmost_sibling
         node.parent = self.parent
+
+    def disassociate(self):
+        '''resets references to siblings and parent'''
+        self.leftmost_sibling = self 
+        self.right_sibling = None
+        self.parent = None
+
+    def give_child(self, child):
+        child.disassociate()
+        if self.children != []:
+            child.leftmost_sibling = self.children[0]
+            self.children[-1].right_sibling = child
+        child.parent = self
+        self.children.append(child)
         
 class IntNode(ASTNode):
 
@@ -75,6 +89,11 @@ class AndNode(ASTNode):
         super().__init__()
 
 class OrNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class NotNode(ASTNode):
 
     def __init__(self):
         super().__init__()

@@ -7,13 +7,16 @@ statments : statement statements
     |
 
 statement : declaration NEWLINE
+    | NEWLINE
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
 
 expression : val
-    | expression binary_op val
+    | val binary_op expression
     | unary_op val
+    | unary_op val binary_op expression
+
 
 binary_op : PLUS
     | MINUS

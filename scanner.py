@@ -3,34 +3,7 @@
 from enum import Enum
 import re
 
-
-
-t_ignore = ' \t\r\n'
-
-
-def t_FLOAT(t):
-    r'\d+\.\d+'
-    t.value = float(t.value)
-    return t
-
-def t_INTEGER(t):
-    r'\d+'
-    t.value = int(t.value)
-    return t
-
-def t_COMMENT(t):
-    r'\#.*'
-    pass
-
-def t_error(t):
-    print("illegal character", t.value[0])
-    print(t.value)
-    t.lexer.skip(1)
-    
-#lexer = lex.lex()
-
-
-class TokenTypes(Enum):
+class TokenType(Enum):
     TRUE = 1
     FALSE = 2
     NIL = 3
@@ -50,27 +23,29 @@ class TokenTypes(Enum):
     DIVIDE = 17
     NEWLINE = 18
     IGNORE = 19
+    NOT = 20
 
 matchers = {
-    TokenTypes.TRUE : r'true',
-    TokenTypes.FALSE : r'false',
-    TokenTypes.NIL : r'nil',
-    TokenTypes.DEF : r'def',
-    TokenTypes.AND : r'and',
-    TokenTypes.OR : r'or',
-    TokenTypes.L_PAREN : r'\(',
-    TokenTypes.R_PAREN : r'\)',
-    TokenTypes.ASSIGN : r'=',
-    TokenTypes.IDENTIFIER : r'[a-zA-Z_][a-zA-Z0-9_]*',
-    TokenTypes.COMMENT : r'#.*',
-    TokenTypes.INTEGER : r'\d+',
-    TokenTypes.FLOAT : r'\d+\.\d+',
-    TokenTypes.PLUS : r'\+',
-    TokenTypes.MINUS : r'\-',
-    TokenTypes.MULTIPLY : r'\*',
-    TokenTypes.DIVIDE : r'\/',
-    TokenTypes.NEWLINE : r'\n',
-    TokenTypes.IGNORE : r' '
+    TokenType.TRUE : r'true',
+    TokenType.FALSE : r'false',
+    TokenType.NIL : r'nil',
+    TokenType.DEF : r'def',
+    TokenType.AND : r'and',
+    TokenType.OR : r'or',
+    TokenType.NOT : r'not',
+    TokenType.L_PAREN : r'\(',
+    TokenType.R_PAREN : r'\)',
+    TokenType.ASSIGN : r'=',
+    TokenType.IDENTIFIER : r'[a-zA-Z_][a-zA-Z0-9_]*',
+    TokenType.COMMENT : r'#.*',
+    TokenType.INTEGER : r'\d+',
+    TokenType.FLOAT : r'\d+\.\d+',
+    TokenType.PLUS : r'\+',
+    TokenType.MINUS : r'\-',
+    TokenType.MULTIPLY : r'\*',
+    TokenType.DIVIDE : r'\/',
+    TokenType.NEWLINE : r'\n',
+    TokenType.IGNORE : r' '
 }
 
 class Token():
@@ -80,6 +55,8 @@ class Token():
         self.value = value
 
     def __repr__(self):
+        if self.value == '\n':
+            return "(%s, \\n)" % str(self.kind)
         return "(%s, %s)" % (str(self.kind), self.value)
 
 
@@ -89,18 +66,25 @@ class Scanner():
         self.text = text
         self.tokens = []
         self.matchers = {}
-        for tokenType in TokenTypes:
+        for tokenType in TokenType:
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
     def run(self):
         while self.text != '':
-            for tokenType in TokenTypes:
+            found_match = False
+            for tokenType in TokenType:
                 match = self.matchers[tokenType].match(self.text)
                 if match != None:
                     self.tokens.append(Token(tokenType, match.group(0)))
                     self.text = self.text[len(match.group(0)):]
+                    found_match = True
                     break
-        print(self.tokens)
+            if not found_match:
+                print("illegal character", text[0], file=sys.stderr)
+                exit(1)
+
+    def remove_ignore_tokens(self):
+        self.tokens = list(filter(lambda x: x.kind != TokenType.IGNORE, self.tokens))
         
 
 

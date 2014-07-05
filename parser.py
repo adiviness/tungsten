@@ -1,166 +1,159 @@
 
 import sys
 
-from scanner import Scanner
+from scanner import Scanner, TokenType
 from nodes import *
 
-def p_start(p):
-    '''
-    start : block
-    '''
-    p[0] = p[1]
-
-def p_block(p):
-    '''
-    block : statements 
-    '''
-    p[0] = BlockNode()
-    node = p[1]
-    while node != None:
-        p[0].children.append(node)
-        node.parent = p[0]
-        node = node.right_sibling
-
-def p_statements(p):
-    '''
-    statements : statement statements
-    statements :
-    '''
-    if len(p) == 3:
-        if p[2] != None:
-            p[1].add_right_sibling(p[2])
-        p[0] = p[1]
-
-def p_statement(p):
-    '''
-    statement : declaration
-    '''
-    p[0] = p[1]
-
-def p_declaration(p):
-    '''
-    declaration : IDENTIFIER IDENTIFIER ASSIGN expression
-        | IDENTIFIER ASSIGN expression
-    '''
-    if len(p) == 5:
-        id_ = IDNode(p[1])
-        type_  = TypeNode(p[2])
-        p[0] = AssignNode([id_, type_, p[4]])
-    elif len(p) == 4:
-        id_ = IDNode(p[1])
-        p[0] = AssignNode([id_, p[3]])
-
-def p_expression(p):
-    '''
-    expression : val
-    expression : expression binary_op val
-    '''
-    if len(p) == 2:
-        p[0] = p[1]
-    elif len(p) == 4:
-        print(p)
-        p[2].children.append(p[1])
-        p[1].parent = p[2]
-        p[1].add_right_sibling(p[3])
-        p[2].children.append(p[3])
-        p[0] = p[2]
-    else:
-        print("error: bad expression")
-        exit(1)
-
-
-def p_binary_op(p):
-    '''
-    binary_op : PLUS
-        | MINUS
-        | MULTIPLY
-        | DIVIDE
-        | AND
-        | OR
-    '''
-    print(p[1])
-    if p[1] == '+':
-        p[0] = PlusNode()
-
-    elif p[1] == '-':
-        p[0] = MinusNode()
-
-    elif p[1] == '*':
-        p[0] = MultiplyNode()
-
-    elif p[1] == '/':
-        p[0] = DivideNode()
-
-    elif p[1] == 'and':
-        print("here and")
-        p[0] = AndNode()
-
-    elif p[1] == 'or':
-        p[0] = OrNode()
-    else:
-        print("error: no binary op found", file=sys.stderr)
-        exit(1)
-   
-def p_val(p):
-    '''
-    val : INTEGER
-        | FLOAT
-        | TRUE
-        | FALSE
-        | IDENTIFIER
-    '''
-
-    print(p[1])
-    if type(p[1]) == int:
-        p[0] = IntNode(p[1])
-
-    elif type(p[1]) == float:
-        p[0] = FloatNode(p[1])
-
-    elif p[1] == 'true':
-        print("here true")
-        p[0] = BoolNode(True)
-
-    elif p[1] == 'false':
-        p[0] = BoolNode(False)
-
-    else:
-        p[0] = IDNode(p[1])
-
-def p_error(p):
-    print("Parse Error at %s" % p.value, file=sys.stderr)
-    exit(1)
-
 def parse():
-    #parser = yacc.yacc()
     input_text = ''
     for line in sys.stdin:
         input_text += line
-    #root_node = parser.parse(input_text)
-    #return root_node
     scanner = Scanner(input_text)
     scanner.run()
-    exit(0)
+    scanner.remove_ignore_tokens()
+    parser = Parser()
+    parser.parse(scanner.tokens)
+    return parser.root_node
 
 class Parser:
     '''recursive descent parser'''
 
     def __init__(self):
-        self.root_node = None
         self.tokens = None
+        self.root_node = None
+        self.line_number = 1
+
+    def match(self, *tokenTypes):
+        return self.tokens[0].kind in tokenTypes
+
+    def consume(self, tokenType):
+        if tokenType != self.tokens[0].kind:
+            self.error(tokenType)
+        return self.pop_token()
+
+    def pop_token(self):
+        token = self.tokens[0]
+        self.tokens = self.tokens[1:]
+        return token 
+
+    def error(self, tokenType):
+            print("parse error on line %d" % self.line_number, file=sys.stderr)
+            print("expected", tokenType, "but received", self.tokens[0].kind, "with value:", self.tokens[0].value, file=sys.stderr)
+            exit(1)
 
     def parse(self, tokens):
+        self.line_number = 1 # reset line number
         self.tokens = tokens
         self.root_node = BlockNode()
-        self.statements()
+        for node in self.statements():
+            self.root_node.give_child(node)
 
     def statements(self):
-        while self.tokens != []:
-            self.statement()
+        statement_nodes = []
+        while True:
+            while self.tokens != [] and self.match(TokenType.NEWLINE):
+                self.consume(TokenType.NEWLINE)
+                self.line_number += 1
+            if self.tokens == []:
+                break
+            statement_nodes.append(self.statement())
+        return statement_nodes
 
     def statement(self):
-        self.declaration()
-
+        decl_node = self.declaration()
+        # newline
+        self.consume(TokenType.NEWLINE)
+        self.line_number += 1
+        return decl_node
+        
     def declaration(self):
-        NotImplemented
+        var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
+        assign_node = AssignNode()
+        assign_node.give_child(var_name_node)
+        if self.match(TokenType.ASSIGN):
+            self.consume(TokenType.ASSIGN)
+        else:
+            type_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
+            assign_node.give_child(type_name_node)
+            self.consume(TokenType.ASSIGN)
+        assign_node.give_child(self.expression())
+        return assign_node
+
+    def expression(self):
+        if self.match(TokenType.INTEGER,
+                      TokenType.FLOAT,
+                      TokenType.TRUE,
+                      TokenType.FALSE,
+                      TokenType.IDENTIFIER):
+            node = self.val()
+        else: 
+            node = self.unary_op()
+            node.give_child(self.val())
+        if self.match(TokenType.PLUS,
+                      TokenType.MINUS,
+                      TokenType.MULTIPLY,
+                      TokenType.DIVIDE,
+                      TokenType.OR,
+                      TokenType.AND):
+            binary_op_node = self.binary_op()
+            binary_op_node.give_child(node)
+            exp_node = self.expression()
+            binary_op_node.give_child(exp_node)
+            return binary_op_node
+        else:
+            return node
+
+    def val(self):
+        print(self.tokens[0])
+        if self.match(TokenType.INTEGER):
+            token = self.consume(TokenType.INTEGER)
+            return IntNode(token.value)
+        elif self.match(TokenType.FLOAT):
+            token = self.consume(TokenType.FLOAT)
+            return FloatNode(token.value)
+        elif self.match(TokenType.TRUE):
+            token = self.consume(TokenType.TRUE)
+            return BoolNode(token.value)
+        elif self.match(TokenType.FALSE):
+            token = self.consume(TokenType.FALSE)
+            return BoolNode(token.value)
+        elif self.match(TokenType.IDENTIFIER):
+            token = self.consume(TokenType.IDENTIFIER)
+            return IDNode(token.value)
+
+    def unary_op(self):
+        print("unary_op", self.tokens[0])
+        if self.match(TokenType.MINUS):
+            token = self.consume(TokenType.MINUS)
+            return MinusNode()
+        elif self.match(TokenType.NOT):
+            token = self.consume(TokenType.NOT)
+            return NotNode()
+
+    def binary_op(self):
+        print(self.tokens[0])
+        if self.match(TokenType.PLUS):
+            token = self.consume(TokenType.PLUS)
+            return PlusNode()
+        elif self.match(TokenType.MINUS):
+            token = self.consume(TokenType.MINUS)
+            return MinusNode()
+        elif self.match(TokenType.MULTIPLY):
+            token = self.consume(TokenType.MULTIPLY)
+            return MultiplyNode()
+        elif self.match(TokenType.DIVIDE):
+            token = self.consume(TokenType.DIVIDE)
+            return DivideNode()
+        elif self.match(TokenType.AND):
+            token = self.consume(TokenType.AND)
+            return AndNode()
+        
     
+
+
+
+
+
+
+
+            
