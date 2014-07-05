@@ -68,6 +68,7 @@ class Parser:
     def statement(self):
         print(self.tokens[0])
         if self.match(TokenType.IF):
+            # if statement
             self.consume(TokenType.IF)
             node = IfNode()
             exp_node = self.expression()
@@ -79,6 +80,16 @@ class Parser:
             self.consume(TokenType.DEDENT)
             node.give_child(exp_node)
             node.give_child(block_node)
+            # possible else statement
+            if self.match(TokenType.ELSE):
+                self.consume(TokenType.ELSE)
+                self.consume(TokenType.COLON)
+                self.consume(TokenType.NEWLINE)
+                self.line_number += 1
+                self.consume(TokenType.INDENT)
+                block_node = self.block()
+                self.consume(TokenType.DEDENT)
+                node.give_child(block_node)
         else:
             node = self.declaration()
         # newline
