@@ -1,41 +1,12 @@
 
-import ply.lex as lex
+#import ply.lex as lex
+from enum import Enum
+import re
 
-reserved = {
-    'true':'TRUE',
-    'false': 'FALSE',
-    'nil': 'NIL',
-    'def': 'DEFINE',
-    'and': 'AND',
-    'or': 'OR'
-}
 
-tokens = [
-    "L_PAREN",
-    "R_PAREN",
-    "ASSIGN",
-    "IDENTIFIER",
-    "COMMENT",
-    "INTEGER",
-    "FLOAT",
-    "PLUS",
-    "MINUS",
-    "MULTIPLY",
-    "DIVIDE"
-]
-
-tokens += list(reserved.values())
 
 t_ignore = ' \t\r\n'
 
-t_L_PAREN = r'\('
-t_R_PAREN = r'\)'
-t_ASSIGN = r'='
-t_IDENTIFIER = r'[a-zA-Z_][a-zA-Z0-9_]*'
-t_PLUS = r'\+'
-t_MINUS = r'\-'
-t_MULTIPLY = r'\*'
-t_DIVIDE = r'\/'
 
 def t_FLOAT(t):
     r'\d+\.\d+'
@@ -56,8 +27,81 @@ def t_error(t):
     print(t.value)
     t.lexer.skip(1)
     
-lexer = lex.lex()
+#lexer = lex.lex()
 
+
+class TokenTypes(Enum):
+    TRUE = 1
+    FALSE = 2
+    NIL = 3
+    DEF = 4
+    AND = 5
+    OR = 6
+    L_PAREN = 7
+    R_PAREN = 8
+    ASSIGN = 9
+    IDENTIFIER = 10
+    COMMENT = 11
+    INTEGER = 12
+    FLOAT = 13
+    PLUS = 14
+    MINUS = 15
+    MULTIPLY = 16
+    DIVIDE = 17
+    NEWLINE = 18
+    IGNORE = 19
+
+matchers = {
+    TokenTypes.TRUE : r'true',
+    TokenTypes.FALSE : r'false',
+    TokenTypes.NIL : r'nil',
+    TokenTypes.DEF : r'def',
+    TokenTypes.AND : r'and',
+    TokenTypes.OR : r'or',
+    TokenTypes.L_PAREN : r'\(',
+    TokenTypes.R_PAREN : r'\)',
+    TokenTypes.ASSIGN : r'=',
+    TokenTypes.IDENTIFIER : r'[a-zA-Z_][a-zA-Z0-9_]*',
+    TokenTypes.COMMENT : r'#.*',
+    TokenTypes.INTEGER : r'\d+',
+    TokenTypes.FLOAT : r'\d+\.\d+',
+    TokenTypes.PLUS : r'\+',
+    TokenTypes.MINUS : r'\-',
+    TokenTypes.MULTIPLY : r'\*',
+    TokenTypes.DIVIDE : r'\/',
+    TokenTypes.NEWLINE : r'\n',
+    TokenTypes.IGNORE : r' '
+}
+
+class Token():
+
+    def __init__(self, kind, value):
+        self.kind = kind
+        self.value = value
+
+    def __repr__(self):
+        return "(%s, %s)" % (str(self.kind), self.value)
+
+
+class Scanner():
+
+    def __init__(self, text):
+        self.text = text
+        self.tokens = []
+        self.matchers = {}
+        for tokenType in TokenTypes:
+            self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
+
+    def run(self):
+        while self.text != '':
+            for tokenType in TokenTypes:
+                match = self.matchers[tokenType].match(self.text)
+                if match != None:
+                    self.tokens.append(Token(tokenType, match.group(0)))
+                    self.text = self.text[len(match.group(0)):]
+                    break
+        print(self.tokens)
+        
 
 
 

@@ -1,8 +1,7 @@
 
-import ply.yacc as yacc
 import sys
 
-from scanner import tokens
+from scanner import Scanner
 from nodes import *
 
 def p_start(p):
@@ -133,9 +132,35 @@ def p_error(p):
     exit(1)
 
 def parse():
-    parser = yacc.yacc()
+    #parser = yacc.yacc()
     input_text = ''
     for line in sys.stdin:
         input_text += line
-    root_node = parser.parse(input_text)
-    return root_node
+    #root_node = parser.parse(input_text)
+    #return root_node
+    scanner = Scanner(input_text)
+    scanner.run()
+    exit(0)
+
+class Parser:
+    '''recursive descent parser'''
+
+    def __init__(self):
+        self.root_node = None
+        self.tokens = None
+
+    def parse(self, tokens):
+        self.tokens = tokens
+        self.root_node = BlockNode()
+        self.statements()
+
+    def statements(self):
+        while self.tokens != []:
+            self.statement()
+
+    def statement(self):
+        self.declaration()
+
+    def declaration(self):
+        NotImplemented
+    

@@ -6,7 +6,7 @@ block : statements
 statments : statement statements
     |
 
-statement : declaration
+statement : declaration NEWLINE
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
