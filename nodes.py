@@ -158,4 +158,9 @@ class WhileNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class CallNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
         

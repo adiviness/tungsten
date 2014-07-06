@@ -32,6 +32,11 @@ class Parser:
     def match(self, *tokenTypes):
         return self.tokens[0].kind in tokenTypes
 
+    def matchN(self, tokenType, n):
+        if len(self.tokens) > n:
+            return self.tokens[n].kind == tokenType
+        return False
+
     def consume(self, tokenType):
         if tokenType != self.tokens[0].kind:
             self.error(tokenType)
@@ -155,7 +160,11 @@ class Parser:
         return assign_node
 
     def expression(self):
-        if self.match(TokenType.INTEGER,
+        # function
+        if self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
+            node = self.function()
+        # val
+        elif self.match(TokenType.INTEGER,
                       TokenType.FLOAT,
                       TokenType.TRUE,
                       TokenType.FALSE,
@@ -186,6 +195,24 @@ class Parser:
             return binary_op_node
         else:
             return node
+
+    def function(self):
+        node = CallNode()
+        node.give_child(self.val())
+        self.consume(TokenType.L_PAREN)
+        if not self.match(TokenType.R_PAREN):
+            args = self.arg_list()
+            for arg_node in args:
+                node.give_child(arg_node)
+        self.consume(TokenType.R_PAREN)
+        return node
+            
+    def arg_list(self):
+        args = [self.val()]
+        while self.match(TokenType.COMMA):
+            self.consume(TokenType.COMMA)
+            args.append(self.val())
+        return args
 
     def val(self):
         print(self.tokens[0])

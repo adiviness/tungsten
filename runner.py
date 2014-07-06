@@ -4,6 +4,7 @@ import sys, os.path
 from parser import parse
 from semantic_checker import SemanticChecker
 from CGenerator import CGenerator
+from nodes import *
 
 
 class Runner:
@@ -28,7 +29,10 @@ class Runner:
         self._write_node_children(output_file, self.root)
 
     def _write_node_ids(self, output_file, node):
-        if node.data != None:
+        # need to escape " on strings
+        if type(node) == StringNode:
+            print(node.node_id, "%s:" % node.__class__.__name__, node.data.replace('"', '\\"'), file=output_file)
+        elif node.data != None:
             print(node.node_id, "%s:" % node.__class__.__name__, node.data, file=output_file)
         else:
             print(node.node_id, "%s" % node.__class__.__name__, file=output_file)

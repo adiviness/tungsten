@@ -26,6 +26,15 @@ expression : val
     | val binary_op expression
     | unary_op val
     | unary_op val binary_op expression
+    | function
+    | unary_op function
+    | function binary_op expression
+
+function : IDENTIFIER L_PAREN R_PAREN
+    | IDENTIFIER L_PAREN arg_list R_PAREN
+
+arg_list : val
+    | val COMMA arg_list
 
 
 binary_op : PLUS

@@ -48,6 +48,7 @@ class CGenerator:
         output_file = open("%s.c" % self.output_file_prefix, 'w')
         print("#include <stdbool.h>", file=output_file)
         print("#include <math.h>", file=output_file)
+        print("#include <stdio.h>", file=output_file)
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
         print("typedef char* String;", file=output_file)
