@@ -1,7 +1,7 @@
 
 start : block $
 
-block : statements
+block : INDENT statements DEDENT
 
 statments : statement statements
     |
@@ -17,13 +17,13 @@ statement : declaration NEWLINE
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
 
-if : IF expression COLON NEWLINE INDENT block DEDENT elif
-    | IF expression COLON NEWLINE INDENT block DEDENT elif ELSE INDENT block DEDENT
+if : IF expression COLON NEWLINE block elif
+    | IF expression COLON NEWLINE block elif ELSE block 
 
-elif : ELIF expression COLON NEWLINE INDENT block DEDENT elif
+elif : ELIF expression COLON NEWLINE block elif
     |
 
-while : WHILE expression COLON NEWLINE INDENT block DEDENT
+while : WHILE expression COLON NEWLINE block 
     
 expression : val
     | val binary_op expression
@@ -33,19 +33,21 @@ expression : val
     | unary_op function_call
     | function_call binary_op expression
 
+array : L_BRACKET R_BRACKET
+    | L_BRACKET arg_list R_BRACKET
+    | IDENTIFIER L_BRACKET IDENTIFIER R_BRACKET
+
 function_call : IDENTIFIER L_PAREN R_PAREN
     | IDENTIFIER L_PAREN arg_list R_PAREN
 
 arg_list : expression
     | expression COMMA arg_list
 
-function_define : DEF IDENTIFIER L_PAREN R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT
-    | DEF IDENTIFIER L_PAREN param_list R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT
-
+function_define : DEF IDENTIFIER L_PAREN R_PAREN IDENTIFIER COLON NEWLINE block 
+    | DEF IDENTIFIER L_PAREN param_list R_PAREN IDENTIFIER COLON NEWLINE block 
 
 param_list : IDENTIFIER IDENTIFIER
     | IDENTIFIER IDENTIFIER COMMA param_list
-
 
 binary_op : PLUS
     | MINUS
@@ -59,7 +61,6 @@ binary_op : PLUS
     | LESS_THAN_EQUAL
     | GREATER_THAN
     | GREATER_THAN_EQUAL
-   
 
 unary_op : MINUS
     | NOT
@@ -70,3 +71,4 @@ val : INTEGER
     | FALSE
     | STRING
     | IDENTIFIER
+    #| IDENTIFIER L_BRACKET IDENTIFIER R_BRACKET

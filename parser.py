@@ -57,12 +57,17 @@ class Parser:
     def parse(self, tokens):
         self.line_number = 1 # reset line number
         self.tokens = tokens
-        self.root_node = self.block()
-
-    def block(self):
         block_node = BlockNode()
         for node in self.statements():
             block_node.give_child(node)
+        self.root_node = block_node
+
+    def block(self):
+        block_node = BlockNode()
+        self.consume(TokenType.INDENT)
+        for node in self.statements():
+            block_node.give_child(node)
+        self.consume(TokenType.DEDENT)
         return block_node
         
     def statements(self):
@@ -107,9 +112,7 @@ class Parser:
         self.consume(TokenType.COLON)
         self.consume(TokenType.NEWLINE)
         self.line_number += 1
-        self.consume(TokenType.INDENT)
         block_node = self.block()
-        self.consume(TokenType.DEDENT)
         node.give_child(exp_node)
         node.give_child(block_node)
         # possible elif statements
@@ -120,9 +123,7 @@ class Parser:
             self.consume(TokenType.COLON)
             self.consume(TokenType.NEWLINE)
             self.line_number += 1
-            self.consume(TokenType.INDENT)
             block_node = self.block()
-            self.consume(TokenType.DEDENT)
             elif_node.give_child(exp_node)
             elif_node.give_child(block_node)
             node.give_child(elif_node)
@@ -133,9 +134,7 @@ class Parser:
             self.consume(TokenType.COLON)
             self.consume(TokenType.NEWLINE)
             self.line_number += 1
-            self.consume(TokenType.INDENT)
             block_node = self.block()
-            self.consume(TokenType.DEDENT)
             node.give_child(block_node)
         return top_node
 
@@ -147,9 +146,7 @@ class Parser:
         self.consume(TokenType.COLON)
         self.consume(TokenType.NEWLINE)
         self.line_number += 1
-        self.consume(TokenType.INDENT)
         block_node = self.block()
-        self.consume(TokenType.DEDENT)
         node.give_child(exp_node)
         node.give_child(block_node)
         return node
@@ -171,6 +168,9 @@ class Parser:
         # function
         if self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
             node = self.function()
+        # array
+        elif self.match(TokenType.L_BRACKET) or self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_BRACKET, 1):
+            node = self.array()
         # val
         elif self.match(TokenType.INTEGER,
                       TokenType.FLOAT,
@@ -204,6 +204,11 @@ class Parser:
         else:
             return node
 
+    def array(self):
+        #if self.match(TokenType.IDENTIFIER):
+        NotImplemented
+            
+
     def function(self):
         node = CallNode()
         node.give_child(self.val())
@@ -236,9 +241,7 @@ class Parser:
         self.consume(TokenType.COLON)
         self.consume(TokenType.NEWLINE)
         self.line_number += 1
-        self.consume(TokenType.INDENT)
         node.give_child(self.block())
-        self.consume(TokenType.DEDENT)
         return node
 
     def param_list(self):

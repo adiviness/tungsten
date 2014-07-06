@@ -54,6 +54,7 @@ class CGenerator:
         print("#include <math.h>", file=output_file)
         print("#include <stdio.h>", file=output_file)
         print("typedef int Int;", file=output_file)
+        print("typedef double Float;", file=output_file)
         print("typedef bool Bool;", file=output_file)
         print("typedef char* String;", file=output_file)
         # generate functions before main
