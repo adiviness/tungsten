@@ -33,9 +33,7 @@ expression : val
     | unary_op function_call
     | function_call binary_op expression
 
-array : L_BRACKET R_BRACKET
-    | L_BRACKET arg_list R_BRACKET
-    | IDENTIFIER L_BRACKET IDENTIFIER R_BRACKET
+array : IDENTIFIER L_BRACKET expression R_BRACKET
 
 function_call : IDENTIFIER L_PAREN R_PAREN
     | IDENTIFIER L_PAREN arg_list R_PAREN
@@ -71,4 +69,4 @@ val : INTEGER
     | FALSE
     | STRING
     | IDENTIFIER
-    #| IDENTIFIER L_BRACKET IDENTIFIER R_BRACKET
+    | array

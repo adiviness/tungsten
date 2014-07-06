@@ -172,3 +172,8 @@ class ReturnNode(ASTNode):
 
     def __init__(self):
         super().__init__()
+
+class IndexNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()

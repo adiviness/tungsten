@@ -168,9 +168,6 @@ class Parser:
         # function
         if self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
             node = self.function()
-        # array
-        elif self.match(TokenType.L_BRACKET) or self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_BRACKET, 1):
-            node = self.array()
         # val
         elif self.match(TokenType.INTEGER,
                       TokenType.FLOAT,
@@ -205,8 +202,12 @@ class Parser:
             return node
 
     def array(self):
-        #if self.match(TokenType.IDENTIFIER):
-        NotImplemented
+        node = IndexNode();
+        node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
+        self.consume(TokenType.L_BRACKET)
+        node.give_child(self.expression())
+        self.consume(TokenType.R_BRACKET)
+        return node
             
 
     def function(self):
@@ -276,8 +277,11 @@ class Parser:
             token = self.consume(TokenType.STRING)
             return StringNode(token.value)
         elif self.match(TokenType.IDENTIFIER):
-            token = self.consume(TokenType.IDENTIFIER)
-            return IDNode(token.value)
+            if self.matchN(TokenType.L_BRACKET, 1):
+                return self.array()
+            else:
+                token = self.consume(TokenType.IDENTIFIER)
+                return IDNode(token.value)
 
     def unary_op(self):
         #print("unary_op", self.tokens[0])
