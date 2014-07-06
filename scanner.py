@@ -57,8 +57,9 @@ class TokenType(Enum):
     IDENTIFIER = 45
     INTEGER = 46
     FLOAT = 47
+    STRING = 48
     # whitespace
-    IGNORE = 48
+    IGNORE = 49
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -106,7 +107,8 @@ matchers = {
     TokenType.EXPONENT: r'\*\*', 
     TokenType.MOD: r'%',
     TokenType.RETURN: r'return',
-    TokenType.COMMA: r'\,'
+    TokenType.COMMA: r'\,',
+    TokenType.STRING: r'".*?"'
 }
 
 class Token():

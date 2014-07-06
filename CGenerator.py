@@ -50,6 +50,7 @@ class CGenerator:
         print("#include <math.h>", file=output_file)
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
+        print("typedef char* String;", file=output_file)
         print("int main()", end='', file=output_file)
         self.traverse(self.root_node, output_file, 0)
         output_file.close()

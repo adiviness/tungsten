@@ -159,6 +159,7 @@ class Parser:
                       TokenType.FLOAT,
                       TokenType.TRUE,
                       TokenType.FALSE,
+                      TokenType.STRING,
                       TokenType.IDENTIFIER):
             node = self.val()
         else: 
@@ -200,6 +201,9 @@ class Parser:
         elif self.match(TokenType.FALSE):
             token = self.consume(TokenType.FALSE)
             return BoolNode(token.value)
+        elif self.match(TokenType.STRING):
+            token = self.consume(TokenType.STRING)
+            return StringNode(token.value)
         elif self.match(TokenType.IDENTIFIER):
             token = self.consume(TokenType.IDENTIFIER)
             return IDNode(token.value)

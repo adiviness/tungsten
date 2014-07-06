@@ -49,4 +49,5 @@ val : INTEGER
     | FLOAT
     | TRUE
     | FALSE
+    | STRING
     | IDENTIFIER

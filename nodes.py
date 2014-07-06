@@ -46,6 +46,11 @@ class TypeNode(ASTNode):
     def __init__(self, type_):
         super().__init__(type_)
 
+class StringNode(ASTNode):
+
+    def __init__(self, val):
+        super().__init__(val)
+    
 class IDNode(ASTNode):
 
     def __init__(self, id_):
