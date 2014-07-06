@@ -56,6 +56,10 @@ class CGenerator:
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
         print("typedef char* String;", file=output_file)
+        for child in self.root_node.children:
+            if type(child) == DefNode:
+                self.traverse(child, output_file, 0)
+        self.root_node.children = list(filter(lambda x: type(x) != DefNode, self.root_node.children))
         print("int main()", end='', file=output_file)
         self.traverse(self.root_node, output_file, 0)
         output_file.close()
@@ -123,13 +127,33 @@ class CGenerator:
             print(")", sep='', end='', file=output_file)
             if is_statement:
                 print(";", file=output_file)
+
+        elif type(node) == DefNode:
+            print("    "*depth, node.children[-2].data, sep='', end='', file=output_file)
+            print(" ", node.children[0].data, "( ", sep='', end='', file=output_file)
+            if len(node.children) > 3:
+                index = 0
+                params = node.children[1:-2:2]
+                types = node.children[2:-2:2]
+                while index < len(params):
+                    print(types[index].data, params[index].data, end='', file=output_file)
+                    if index + 1 < len(params):
+                        print(", ", sep='', end='', file=output_file)
+                    index += 1
+            print(")", sep='', end='', file=output_file)
+            self.traverse(node.children[-1], output_file, depth)
         
+        elif type(node) == ReturnNode:
+            print("    "*depth, "return ", sep='', end='', file=output_file)
+            self.traverse(node.children[0], output_file, depth)
+            print(";", file=output_file)
+            
         else:
             print(node.data, end='', file=output_file)
 
         if type(node) == BlockNode:
-            if depth == 0:
-                print("    return 0;", file=output_file)
+            #if depth == 0:
+                #print("    return 0;", file=output_file)
             print("    "*(depth), "}", sep='', file=output_file)
 
 
