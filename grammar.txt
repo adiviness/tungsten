@@ -36,8 +36,8 @@ expression : val
 function_call : IDENTIFIER L_PAREN R_PAREN
     | IDENTIFIER L_PAREN arg_list R_PAREN
 
-arg_list : val
-    | val COMMA arg_list
+arg_list : expression
+    | expression COMMA arg_list
 
 function_define : DEF IDENTIFIER L_PAREN R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT
     | DEF IDENTIFIER L_PAREN param_list R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT

@@ -56,6 +56,7 @@ class CGenerator:
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
         print("typedef char* String;", file=output_file)
+        # generate functions before main
         for child in self.root_node.children:
             if type(child) == DefNode:
                 self.traverse(child, output_file, 0)
@@ -120,7 +121,8 @@ class CGenerator:
             index = 1
             while index < len(node.children):
                 child_node = node.children[index]
-                print(child_node.data, sep='', end='', file=output_file)
+                #print(child_node.data, sep='', end='', file=output_file)
+                self.traverse(child_node, output_file, depth)
                 if index + 1 < len(node.children):
                     print(", ", sep='', end='', file=output_file)
                 index += 1

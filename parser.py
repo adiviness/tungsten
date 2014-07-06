@@ -216,10 +216,10 @@ class Parser:
         return node
             
     def arg_list(self):
-        args = [self.val()]
+        args = [self.expression()]
         while self.match(TokenType.COMMA):
             self.consume(TokenType.COMMA)
-            args.append(self.val())
+            args.append(self.expression())
         return args
 
     def function_define(self):
