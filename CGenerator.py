@@ -83,6 +83,13 @@ class CGenerator:
             if len(node.children) == 3:
                 print("    "*depth, "else", sep='', end='', file=output_file)
                 self.traverse(node.children[2], output_file, depth)
+
+        elif type(node) == WhileNode:
+            print("    "*depth, "while (", sep='', end='', file=output_file)
+            self.traverse(node.children[0], output_file, depth)
+            print(")", end='', file=output_file)
+            self.traverse(node.children[1], output_file, depth)
+
         else:
             print(node.data, end='', file=output_file)
 

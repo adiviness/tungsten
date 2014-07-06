@@ -22,27 +22,35 @@ class TokenType(Enum):
     IF = 12
     ELIF = 13
     ELSE = 14
+    WHILE = 15
+    FOR = 16
+    CLASS = 17
+    STATIC = 18
+    INSTANCE = 19
+    IN = 20
+    BREAK = 21
+    CONTINUE = 22
     # symbols
-    COLON = 15
-    L_PAREN = 16
-    R_PAREN = 17
-    PLUS = 18
-    MINUS = 19
-    MULTIPLY = 20
-    DIVIDE = 21
-    EQUAL = 22
-    NOT_EQUAL = 23
-    LESS_THAN_EQUAL = 24
-    GREATER_THAN_EQUAL = 25
-    LESS_THAN = 26
-    GREATER_THAN = 27
-    ASSIGN = 28
+    COLON = 23
+    L_PAREN = 24
+    R_PAREN = 25
+    PLUS = 26
+    MINUS = 27
+    MULTIPLY = 28
+    DIVIDE = 29
+    EQUAL = 30
+    NOT_EQUAL = 31
+    LESS_THAN_EQUAL = 32
+    GREATER_THAN_EQUAL = 33
+    LESS_THAN = 34
+    GREATER_THAN = 35
+    ASSIGN = 36
     # built ins
-    IDENTIFIER = 29
-    INTEGER = 30
-    FLOAT = 31
+    IDENTIFIER = 37
+    INTEGER = 38
+    FLOAT = 39
     # whitespace
-    IGNORE = 32
+    IGNORE = 40
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -74,7 +82,15 @@ matchers = {
     TokenType.LESS_THAN: r'<', 
     TokenType.LESS_THAN_EQUAL: r'<=', 
     TokenType.GREATER_THAN: r'>', 
-    TokenType.GREATER_THAN_EQUAL: r'>='
+    TokenType.GREATER_THAN_EQUAL: r'>=',
+    TokenType.WHILE: r'while', 
+    TokenType.FOR: r'for', 
+    TokenType.CLASS: r'class', 
+    TokenType.STATIC: r'static', 
+    TokenType.INSTANCE: r'instance', 
+    TokenType.IN: r'in', 
+    TokenType.BREAK: r'break', 
+    TokenType.CONTINUE: r'continue', 
 }
 
 class Token():

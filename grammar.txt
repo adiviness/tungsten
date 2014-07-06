@@ -9,6 +9,7 @@ statments : statement statements
 statement : declaration NEWLINE
     | NEWLINE
     | if
+    | while
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
@@ -18,6 +19,8 @@ if : IF expression COLON NEWLINE INDENT block DEDENT elif
 
 elif : ELIF expression COLON NEWLINE INDENT block DEDENT elif
     |
+
+while : WHILE expression COLON NEWLINE INDENT block DEDENT
     
 expression : val
     | val binary_op expression

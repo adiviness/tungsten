@@ -123,7 +123,6 @@ class GreaterThanEqualNode(ASTNode):
     def __init__(self):
         super().__init__()
 
-
 class NotNode(ASTNode):
 
     def __init__(self):
@@ -139,5 +138,9 @@ class IfNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class WhileNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
 
         

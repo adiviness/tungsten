@@ -69,6 +69,8 @@ class Parser:
         print(self.tokens[0])
         if self.match(TokenType.IF):
             node = self.if_()
+        elif self.match(TokenType.WHILE):
+            node = self.while_()
         else:
             node = self.declaration()
         # newline
@@ -117,6 +119,21 @@ class Parser:
             self.consume(TokenType.DEDENT)
             node.give_child(block_node)
         return top_node
+
+    def while_(self):
+        # while statement
+        self.consume(TokenType.WHILE)
+        node = WhileNode()
+        exp_node = self.expression()
+        self.consume(TokenType.COLON)
+        self.consume(TokenType.NEWLINE)
+        self.line_number += 1
+        self.consume(TokenType.INDENT)
+        block_node = self.block()
+        self.consume(TokenType.DEDENT)
+        node.give_child(exp_node)
+        node.give_child(block_node)
+        return node
 
     def declaration(self):
         var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
