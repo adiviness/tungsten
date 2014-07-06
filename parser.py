@@ -30,6 +30,8 @@ class Parser:
         self.line_number = 1
 
     def match(self, *tokenTypes):
+        if self.tokens == []:
+            return False
         return self.tokens[0].kind in tokenTypes
 
     def matchN(self, tokenType, n):
@@ -77,11 +79,13 @@ class Parser:
         return statement_nodes
 
     def statement(self):
-        print(self.tokens[0])
+        #print(self.tokens[0])
         if self.match(TokenType.IF):
             node = self.if_()
         elif self.match(TokenType.WHILE):
             node = self.while_()
+        elif self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
+            node = self.function()
         else:
             node = self.declaration()
         # newline
@@ -215,7 +219,7 @@ class Parser:
         return args
 
     def val(self):
-        print(self.tokens[0])
+        #print(self.tokens[0])
         if self.match(TokenType.INTEGER):
             token = self.consume(TokenType.INTEGER)
             return IntNode(token.value)
@@ -236,7 +240,7 @@ class Parser:
             return IDNode(token.value)
 
     def unary_op(self):
-        print("unary_op", self.tokens[0])
+        #print("unary_op", self.tokens[0])
         if self.match(TokenType.MINUS):
             token = self.consume(TokenType.MINUS)
             return MinusNode()
@@ -245,7 +249,7 @@ class Parser:
             return NotNode()
 
     def binary_op(self):
-        print(self.tokens[0])
+        #print(self.tokens[0])
         if self.match(TokenType.PLUS):
             token = self.consume(TokenType.PLUS)
             return PlusNode()

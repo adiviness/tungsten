@@ -1,5 +1,6 @@
 
 from nodes import *
+import os
 
 OP_NODES = [
     PlusNode,
@@ -45,7 +46,10 @@ class CGenerator:
         self.blocks = 1
 
     def generate(self):
-        output_file = open("%s.c" % self.output_file_prefix, 'w')
+        output_file_name = "%s.c" % self.output_file_prefix
+        fp = open(output_file_name, 'w')
+        fp.close()
+        output_file = open(output_file_name, 'r+')
         print("#include <stdbool.h>", file=output_file)
         print("#include <math.h>", file=output_file)
         print("#include <stdio.h>", file=output_file)
@@ -58,7 +62,6 @@ class CGenerator:
 
     def traverse(self, node, output_file, depth):
         if type(node) == BlockNode:
-            #print("    "*depth, "{", sep='', file=output_file)
             print(" {", file=output_file)
             for child in node.children:
                 self.traverse(child, output_file, depth+1)
@@ -86,7 +89,11 @@ class CGenerator:
             print(")", end='', file=output_file)
 
         elif type(node) == IfNode:
-            print("    "*depth, "if (", sep='', end='', file=output_file)
+            is_not_elif = self.last_char_written(output_file) == "\n"
+            if is_not_elif:
+                print("    "*depth, "if (", sep='', end='', file=output_file)
+            else:
+                print(" if (", sep='', end='', file=output_file)
             self.traverse(node.children[0], output_file, depth)
             print(")", end='', file=output_file)
             self.traverse(node.children[1], output_file, depth)
@@ -101,6 +108,22 @@ class CGenerator:
             print(")", end='', file=output_file)
             self.traverse(node.children[1], output_file, depth)
 
+        elif type(node) == CallNode:
+            is_statement = self.last_char_written(output_file) == "\n"
+            if is_statement:
+                print("    "*depth, sep='', end='', file=output_file)
+            print("%s(" % node.children[0].data, sep='', end='', file=output_file)
+            index = 1
+            while index < len(node.children):
+                child_node = node.children[index]
+                print(child_node.data, sep='', end='', file=output_file)
+                if index + 1 < len(node.children):
+                    print(", ", sep='', end='', file=output_file)
+                index += 1
+            print(")", sep='', end='', file=output_file)
+            if is_statement:
+                print(";", file=output_file)
+        
         else:
             print(node.data, end='', file=output_file)
 
@@ -108,3 +131,12 @@ class CGenerator:
             if depth == 0:
                 print("    return 0;", file=output_file)
             print("    "*(depth), "}", sep='', file=output_file)
+
+
+    def last_char_written(self, output_file):
+        output_file.seek(output_file.tell() - 1)
+        ch = output_file.read(1)
+        output_file.seek(0, os.SEEK_END)
+        return ch
+        
+    
