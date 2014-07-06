@@ -10,7 +10,9 @@ statement : declaration NEWLINE
     | NEWLINE
     | if
     | while
-    | function NEWLINE
+    | function_call NEWLINE
+    | function_define NEWLINE
+    | RETURN expression
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
@@ -27,15 +29,22 @@ expression : val
     | val binary_op expression
     | unary_op val
     | unary_op val binary_op expression
-    | function
-    | unary_op function
-    | function binary_op expression
+    | function_call
+    | unary_op function_call
+    | function_call binary_op expression
 
-function : IDENTIFIER L_PAREN R_PAREN
+function_call : IDENTIFIER L_PAREN R_PAREN
     | IDENTIFIER L_PAREN arg_list R_PAREN
 
 arg_list : val
     | val COMMA arg_list
+
+function_define : DEF IDENTIFIER L_PAREN R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT
+    | DEF IDENTIFIER L_PAREN param_list R_PAREN IDENTIFIER COLON NEWLINE INDENT block DEDENT
+
+
+param_list : IDENTIFIER IDENTIFIER
+    | IDENTIFIER IDENTIFIER COMMA param_list
 
 
 binary_op : PLUS

@@ -86,6 +86,10 @@ class Parser:
             node = self.while_()
         elif self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
             node = self.function()
+        elif self.match(TokenType.DEF):
+            node = self.function_define()
+        elif self.match(TokenType.RETURN):
+            node = self.return_()
         else:
             node = self.declaration()
         # newline
@@ -217,6 +221,39 @@ class Parser:
             self.consume(TokenType.COMMA)
             args.append(self.val())
         return args
+
+    def function_define(self):
+        self.consume(TokenType.DEF)
+        node = DefNode()
+        node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
+        self.consume(TokenType.L_PAREN)
+        if not self.match(TokenType.R_PAREN):
+            param_nodes = self.param_list()
+            for param_node in param_nodes:
+                node.give_child(param_node)
+        self.consume(TokenType.R_PAREN)
+        node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
+        self.consume(TokenType.COLON)
+        self.consume(TokenType.NEWLINE)
+        self.line_number += 1
+        self.consume(TokenType.INDENT)
+        node.give_child(self.block())
+        self.consume(TokenType.DEDENT)
+        return node
+
+    def param_list(self):
+        params = [IDNode(self.consume(TokenType.IDENTIFIER).value),
+                  IDNode(self.consume(TokenType.IDENTIFIER).value)]
+        while self.match(TokenType.COMMA):
+            self.consume(TokenType.COMMA)
+            params.append(IDNode(self.consume(TokenType.IDENTIFIER).value))
+            params.append(IDNode(self.consume(TokenType.IDENTIFIER).value))
+        return params
+    def return_(self):
+        node = ReturnNode()
+        self.consume(TokenType.RETURN)
+        node.give_child(self.expression())
+        return node
 
     def val(self):
         #print(self.tokens[0])

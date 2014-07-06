@@ -163,4 +163,12 @@ class CallNode(ASTNode):
     def __init__(self):
         super().__init__()
 
-        
+class DefNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class ReturnNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
