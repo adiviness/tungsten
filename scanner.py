@@ -1,7 +1,7 @@
 
 #import ply.lex as lex
 from enum import Enum
-import re
+import re, sys
 
 INDENT_AMOUNT = 2
 
@@ -26,17 +26,23 @@ class TokenType(Enum):
     COLON = 15
     L_PAREN = 16
     R_PAREN = 17
-    ASSIGN = 18
-    PLUS = 19
-    MINUS = 20
-    MULTIPLY = 21
-    DIVIDE = 22
+    PLUS = 18
+    MINUS = 19
+    MULTIPLY = 20
+    DIVIDE = 21
+    EQUAL = 22
+    NOT_EQUAL = 23
+    LESS_THAN_EQUAL = 24
+    GREATER_THAN_EQUAL = 25
+    LESS_THAN = 26
+    GREATER_THAN = 27
+    ASSIGN = 28
     # built ins
-    IDENTIFIER = 23
-    INTEGER = 24
-    FLOAT = 25
+    IDENTIFIER = 29
+    INTEGER = 30
+    FLOAT = 31
     # whitespace
-    IGNORE = 26
+    IGNORE = 32
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -62,7 +68,13 @@ matchers = {
     TokenType.MULTIPLY: r'\*',
     TokenType.DIVIDE: r'\/',
     TokenType.NEWLINE: r'\n',
-    TokenType.IGNORE: r' '
+    TokenType.IGNORE: r' ',
+    TokenType.EQUAL: r'==', 
+    TokenType.NOT_EQUAL: r'!=', 
+    TokenType.LESS_THAN: r'<', 
+    TokenType.LESS_THAN_EQUAL: r'<=', 
+    TokenType.GREATER_THAN: r'>', 
+    TokenType.GREATER_THAN_EQUAL: r'>='
 }
 
 class Token():
@@ -114,7 +126,7 @@ class Scanner():
                             indent_level -= 1
                     break
             if not found_match:
-                print("illegal character", text[0], file=sys.stderr)
+                print("illegal character", self.text[0], "in", self.text[:10], file=sys.stderr)
                 exit(1)
 
     def remove_ignore_tokens(self):

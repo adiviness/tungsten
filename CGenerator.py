@@ -8,7 +8,13 @@ OP_NODES = [
     DivideNode,
     OrNode,
     AndNode,
-    NotNode
+    NotNode,
+    EqualNode,
+    NotEqualNode,
+    LessThanNode,
+    LessThanEqualNode,
+    GreaterThanNode,
+    GreaterThanEqualNode
 ]
 
 OP_NODE_SYMBOL = {
@@ -18,7 +24,13 @@ OP_NODE_SYMBOL = {
     DivideNode: '/',
     OrNode: '||' ,
     AndNode: '&&',
-    NotNode: '!'
+    NotNode: '!',
+    EqualNode: '==',
+    NotEqualNode: '!=',
+    LessThanNode: '<',
+    LessThanEqualNode: '<=',
+    GreaterThanNode: '>',
+    GreaterThanEqualNode: '>='
 }
     
 

@@ -93,6 +93,37 @@ class OrNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class EqualNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class NotEqualNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class LessThanNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class LessThanEqualNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class GreaterThanNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class GreaterThanEqualNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+
 class NotNode(ASTNode):
 
     def __init__(self):

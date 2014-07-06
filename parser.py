@@ -146,7 +146,13 @@ class Parser:
                       TokenType.MULTIPLY,
                       TokenType.DIVIDE,
                       TokenType.OR,
-                      TokenType.AND):
+                      TokenType.AND,
+                      TokenType.EQUAL,
+                      TokenType.NOT_EQUAL,
+                      TokenType.LESS_THAN,
+                      TokenType.LESS_THAN_EQUAL,
+                      TokenType.GREATER_THAN,
+                      TokenType.GREATER_THAN_EQUAL):
             binary_op_node = self.binary_op()
             binary_op_node.give_child(node)
             exp_node = self.expression()
@@ -199,6 +205,28 @@ class Parser:
         elif self.match(TokenType.AND):
             token = self.consume(TokenType.AND)
             return AndNode()
+        elif self.match(TokenType.OR):
+            token = self.consume(TokenType.OR)
+            return OrNode()
+        elif self.match(TokenType.EQUAL):
+            token = self.consume(TokenType.EQUAL)
+            return EqualNode()
+        elif self.match(TokenType.NOT_EQUAL):
+            token = self.consume(TokenType.NOT_EQUAL)
+            return NotEqualNode()
+        elif self.match(TokenType.LESS_THAN):
+            token = self.consume(TokenType.LESS_THAN)
+            return LessThanNode()
+        elif self.match(TokenType.LESS_THAN_EQUAL):
+            token = self.consume(TokenType.LESS_THAN_EQUAL)
+            return LessThanEqualNode()
+        elif self.match(TokenType.GREATER_THAN):
+            token = self.consume(TokenType.GREATER_THAN)
+            return GreaterThanNode()
+        elif self.match(TokenType.GREATER_THAN_EQUAL):
+            token = self.consume(TokenType.GREATER_THAN_EQUAL)
+            return GreaterThanEqualNode()
+            
         
     
 

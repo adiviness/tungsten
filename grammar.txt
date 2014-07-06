@@ -31,6 +31,12 @@ binary_op : PLUS
     | DIVIDE
     | OR
     | AND
+    | EQUAL
+    | NOT_EQUAL
+    | LESS_THAN
+    | LESS_THAN_EQUAL
+    | GREATER_THAN
+    | GREATER_THAN_EQUAL
    
 
 unary_op : MINUS
