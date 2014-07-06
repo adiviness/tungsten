@@ -1,0 +1,5 @@
+#!/bin/sh
+
+basename=${1%%.*}
+python3 runner.py $1
+gcc -std=c99 -o $basename "$basename.c"

@@ -1,5 +1,5 @@
 
-import sys
+import sys, os.path
 
 from parser import parse
 from semantic_checker import SemanticChecker
@@ -55,6 +55,6 @@ class Runner:
 if __name__ == "__main__":
     output_file_prefix = "output"
     if len(sys.argv) >= 2:
-        output_file_prefix = sys.argv[1]
+        output_file_prefix = os.path.splitext(sys.argv[1])[0]
     runner = Runner(output_file_prefix)
     runner.run()

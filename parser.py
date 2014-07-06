@@ -6,8 +6,14 @@ from nodes import *
 
 def parse():
     input_text = ''
-    for line in sys.stdin:
-        input_text += line
+    if len(sys.argv) > 1:
+        fp = open(sys.argv[1], 'r')
+        for line in fp:
+            input_text += line
+        fp.close()
+    else:
+        for line in sys.stdin:
+            input_text += line
     scanner = Scanner(input_text)
     scanner.run()
     scanner.remove_ignore_tokens()
