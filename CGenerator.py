@@ -6,6 +6,7 @@ OP_NODES = [
     MinusNode,
     MultiplyNode,
     DivideNode,
+    ModNode,
     OrNode,
     AndNode,
     NotNode,
@@ -22,6 +23,7 @@ OP_NODE_SYMBOL = {
     MinusNode: '-',
     MultiplyNode: '*',
     DivideNode: '/',
+    ModNode: '%',
     OrNode: '||' ,
     AndNode: '&&',
     NotNode: '!',
@@ -45,6 +47,7 @@ class CGenerator:
     def generate(self):
         output_file = open("%s.c" % self.output_file_prefix, 'w')
         print("#include <stdbool.h>", file=output_file)
+        print("#include <math.h>", file=output_file)
         print("typedef int Int;", file=output_file)
         print("typedef bool Bool;", file=output_file)
         print("int main()", end='', file=output_file)
@@ -73,6 +76,12 @@ class CGenerator:
                 self.traverse(node.children[0], output_file, depth+1)
                 print(OP_NODE_SYMBOL[type(node)], end='', file=output_file)
                 self.traverse(node.children[1], output_file, depth+1)
+        elif type(node) == ExponentNode:
+            print("pow(", end='', file=output_file)
+            self.traverse(node.children[0], output_file, depth+1)
+            print(", ", end='', file=output_file)
+            self.traverse(node.children[1], output_file, depth+1)
+            print(")", end='', file=output_file)
 
         elif type(node) == IfNode:
             print("    "*depth, "if (", sep='', end='', file=output_file)

@@ -30,27 +30,35 @@ class TokenType(Enum):
     IN = 20
     BREAK = 21
     CONTINUE = 22
+    RETURN = 23
     # symbols
-    COLON = 23
-    L_PAREN = 24
-    R_PAREN = 25
-    PLUS = 26
-    MINUS = 27
-    MULTIPLY = 28
-    DIVIDE = 29
-    EQUAL = 30
-    NOT_EQUAL = 31
-    LESS_THAN_EQUAL = 32
-    GREATER_THAN_EQUAL = 33
-    LESS_THAN = 34
-    GREATER_THAN = 35
-    ASSIGN = 36
+    COLON = 24
+    COMMA = 25
+    L_PAREN = 26
+    R_PAREN = 27
+    L_BRACKET = 28
+    R_BRACKET = 29
+    L_BRACE = 30
+    R_BRACE = 31
+    EXPONENT = 32
+    PLUS = 33
+    MINUS = 34
+    MULTIPLY = 35
+    DIVIDE = 36
+    MOD = 37
+    EQUAL = 38
+    NOT_EQUAL = 39
+    LESS_THAN_EQUAL = 40
+    GREATER_THAN_EQUAL = 41
+    LESS_THAN = 42
+    GREATER_THAN = 43
+    ASSIGN = 44
     # built ins
-    IDENTIFIER = 37
-    INTEGER = 38
-    FLOAT = 39
+    IDENTIFIER = 45
+    INTEGER = 46
+    FLOAT = 47
     # whitespace
-    IGNORE = 40
+    IGNORE = 48
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -91,6 +99,14 @@ matchers = {
     TokenType.IN: r'in', 
     TokenType.BREAK: r'break', 
     TokenType.CONTINUE: r'continue', 
+    TokenType.L_BRACKET: r'\[', 
+    TokenType.R_BRACKET: r'\]', 
+    TokenType.L_BRACE: r'\{', 
+    TokenType.R_BRACE: r'\}', 
+    TokenType.EXPONENT: r'\*\*', 
+    TokenType.MOD: r'%',
+    TokenType.RETURN: r'return',
+    TokenType.COMMA: r'\,'
 }
 
 class Token():

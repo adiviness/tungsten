@@ -83,6 +83,16 @@ class DivideNode(ASTNode):
     def __init__(self):
         super().__init__()
 
+class ModNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class ExponentNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
 class AndNode(ASTNode):
 
     def __init__(self):

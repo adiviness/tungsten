@@ -168,6 +168,8 @@ class Parser:
                       TokenType.MINUS,
                       TokenType.MULTIPLY,
                       TokenType.DIVIDE,
+                      TokenType.MOD,
+                      TokenType.EXPONENT,
                       TokenType.OR,
                       TokenType.AND,
                       TokenType.EQUAL,
@@ -225,6 +227,12 @@ class Parser:
         elif self.match(TokenType.DIVIDE):
             token = self.consume(TokenType.DIVIDE)
             return DivideNode()
+        elif self.match(TokenType.MOD):
+            token = self.consume(TokenType.MOD)
+            return ModNode()
+        elif self.match(TokenType.EXPONENT):
+            token = self.consume(TokenType.EXPONENT)
+            return ExponentNode()
         elif self.match(TokenType.AND):
             token = self.consume(TokenType.AND)
             return AndNode()
