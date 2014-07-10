@@ -13,9 +13,12 @@ statement : declaration NEWLINE
     | function_call NEWLINE
     | function_define NEWLINE
     | RETURN expression
+    | class_define
 
 declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
+    | CLASS_VAR IDENTIFIER ASSIGN expression
+    | INSTANCE_VAR IDENTIFIER ASSIGN expression
 
 if : IF expression COLON NEWLINE block elif
     | IF expression COLON NEWLINE block elif ELSE block 
@@ -47,6 +50,21 @@ function_define : DEF IDENTIFIER L_PAREN R_PAREN IDENTIFIER COLON NEWLINE block
 param_list : IDENTIFIER IDENTIFIER
     | IDENTIFIER IDENTIFIER COMMA param_list
 
+class_define: CLASS IDENTIFIER COLON NEWLINE class_block
+
+class_block: INDENT class_statements DEDENT
+
+class_statements : class_statement class_statements
+    |
+
+class_statement : class_var_declaration NEWLINE
+    | NEWLINE
+    | STATIC COLON NEWLINE block
+    | INSTANCE COLON NEWLINE block
+
+class_var_declaration : INSTANCE_VAR IDENTIFIER IDENTIFIER
+    | CLASS_VAR IDENTIFIER IDENTIFIER
+
 binary_op : PLUS
     | MINUS
     | MULTIPLY
@@ -70,3 +88,5 @@ val : INTEGER
     | STRING
     | IDENTIFIER
     | array
+    | CLASS_VAR IDENTIFIER
+    | INSTANCE_VAR IDENTIFIER

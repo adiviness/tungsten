@@ -95,12 +95,79 @@ class Parser:
             node = self.function_define()
         elif self.match(TokenType.RETURN):
             node = self.return_()
+        elif self.match(TokenType.CLASS):
+            node = self.class_define()
         else:
             node = self.declaration()
         # newline
         if self.match(TokenType.NEWLINE):
             self.consume(TokenType.NEWLINE)
             self.line_number += 1
+        return node
+
+    def class_define(self):
+        node = ClassNode()
+        self.consume(TokenType.CLASS)
+        node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
+        self.consume(TokenType.COLON)
+        self.consume(TokenType.NEWLINE)
+        self.line_number += 1
+        node.give_child(self.class_block())
+        return node
+
+    def class_block(self):
+        node = ClassBlockNode()
+        self.consume(TokenType.INDENT)
+        class_statements = self.class_statements()
+        self.consume(TokenType.DEDENT)
+        for statement in class_statements:
+            node.give_child(statement)
+        return node
+
+    def class_statements(self):
+        statement_nodes = []
+        while True:
+            print(self.tokens)
+            print()
+            while self.tokens != [] and self.match(TokenType.NEWLINE):
+                self.consume(TokenType.NEWLINE)
+                self.line_number += 1
+            if self.tokens == []:
+                break
+            if self.match(TokenType.DEDENT):
+                break
+            statement_nodes.append(self.class_statement())
+        return statement_nodes
+    
+    def class_statement(self):
+        if self.match(TokenType.INSTANCE_VAR, TokenType.CLASS_VAR):
+            return self.class_var_declaration()
+        else:
+            if self.match(TokenType.STATIC):
+                node = StaticNode()
+                self.consume(TokenType.STATIC)
+            elif self.match(TokenType.INSTANCE):
+                node = InstanceNode()
+                self.consume(TokenType.INSTANCE)
+            self.consume(TokenType.COLON)
+            self.consume(TokenType.NEWLINE)
+            print(self.tokens)
+            print()
+            block_node = self.block()
+            node.children = block_node.children
+            return node
+
+    def class_var_declaration(self):
+        node = FieldNode()
+        if self.match(TokenType.INSTANCE_VAR):
+            print('instance var')
+            self.consume(TokenType.INSTANCE_VAR)
+            node.give_child(InstanceVarNode(self.consume(TokenType.IDENTIFIER).value))
+        elif self.match(TokenType.CLASS_VAR):
+            print('static var')
+            self.consume(TokenType.CLASS_VAR)
+            node.give_child(ClassVarNode(self.consume(TokenType.IDENTIFIER).value))
+        node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
         return node
 
     def if_(self):
@@ -152,20 +219,35 @@ class Parser:
         return node
 
     def declaration(self):
-        var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
         assign_node = AssignNode()
-        assign_node.give_child(var_name_node)
-        if self.match(TokenType.ASSIGN):
+        if self.match(TokenType.CLASS_VAR):
+            self.consume(TokenType.CLASS_VAR)
+            var_name_node = ClassVarNode(self.consume(TokenType.IDENTIFIER).value)
+            assign_node.give_child(var_name_node)
+            self.consume(TokenType.ASSIGN)
+        elif self.match(TokenType.INSTANCE_VAR):
+            self.consume(TokenType.INSTANCE_VAR)
+            var_name_node = InstanceVarNode(self.consume(TokenType.IDENTIFIER).value)
+            assign_node.give_child(var_name_node)
             self.consume(TokenType.ASSIGN)
         else:
-            type_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
-            assign_node.give_child(type_name_node)
-            self.consume(TokenType.ASSIGN)
+            var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
+            assign_node.give_child(var_name_node)
+            if self.match(TokenType.ASSIGN):
+                self.consume(TokenType.ASSIGN)
+            else:
+                type_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
+                assign_node.give_child(type_name_node)
+                self.consume(TokenType.ASSIGN)
+        print(self.tokens)
+        print()
         assign_node.give_child(self.expression())
         return assign_node
 
     def expression(self):
         # function
+        print(self.tokens)
+        print()
         if self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
             node = self.function()
         # val
@@ -174,7 +256,10 @@ class Parser:
                       TokenType.TRUE,
                       TokenType.FALSE,
                       TokenType.STRING,
-                      TokenType.IDENTIFIER):
+                      TokenType.INSTANCE_VAR,
+                      TokenType.CLASS_VAR,
+                      TokenType.IDENTIFIER,
+                      TokenType.NIL):
             node = self.val()
         else: 
             node = self.unary_op()
@@ -276,6 +361,17 @@ class Parser:
         elif self.match(TokenType.STRING):
             token = self.consume(TokenType.STRING)
             return StringNode(token.value)
+        elif self.match(TokenType.CLASS_VAR):
+            self.consume(TokenType.CLASS_VAR)
+            token = self.consume(TokenType.IDENTIFIER)
+            return ClassVarNode(token.value)
+        elif self.match(TokenType.INSTANCE_VAR):
+            self.consume(TokenType.INSTANCE_VAR)
+            token = self.consume(TokenType.IDENTIFIER)
+            return InstanceVarNode(token.value)
+        elif self.match(TokenType.NIL):
+            self.consume(TokenType.NIL)
+            return NilNode()
         elif self.match(TokenType.IDENTIFIER):
             if self.matchN(TokenType.L_BRACKET, 1):
                 return self.array()

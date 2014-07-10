@@ -53,13 +53,15 @@ class TokenType(Enum):
     LESS_THAN = 42
     GREATER_THAN = 43
     ASSIGN = 44
+    CLASS_VAR = 45
+    INSTANCE_VAR = 46
     # built ins
-    IDENTIFIER = 45
-    INTEGER = 46
-    FLOAT = 47
-    STRING = 48
+    IDENTIFIER = 47
+    INTEGER = 48
+    FLOAT = 49
+    STRING = 50
     # whitespace
-    IGNORE = 49
+    IGNORE = 51
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -108,7 +110,9 @@ matchers = {
     TokenType.MOD: r'%',
     TokenType.RETURN: r'return',
     TokenType.COMMA: r'\,',
-    TokenType.STRING: r'".*?"'
+    TokenType.STRING: r'".*?"',
+    TokenType.CLASS_VAR: r'@@',
+    TokenType.INSTANCE_VAR: r'@'
 }
 
 class Token():
@@ -147,8 +151,10 @@ class Scanner():
                     self.tokens.append(Token(tokenType, match.group(0)))
                     self.text = self.text[len(match.group(0)):]
                     found_match = True
+                    if tokenType == TokenType.COMMENT:
+                        self.tokens[-1] = Token(TokenType.COMMENT, "\n")
                     # check for INDENT or DEDENT
-                    if tokenType == TokenType.NEWLINE:
+                    if tokenType == TokenType.NEWLINE: 
                         match = indent.match(self.text)
                         new_indent_level = len(match.group(0)) / INDENT_AMOUNT
                         self.text = self.text[len(match.group(0)):]
@@ -164,7 +170,7 @@ class Scanner():
                 exit(1)
 
     def remove_ignore_tokens(self):
-        self.tokens = list(filter(lambda x: x.kind != TokenType.IGNORE, self.tokens))
+        self.tokens = list(filter(lambda x: x.kind not in [TokenType.IGNORE, TokenType.COMMENT], self.tokens))
         
 
 

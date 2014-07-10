@@ -177,3 +177,48 @@ class IndexNode(ASTNode):
 
     def __init__(self):
         super().__init__()
+
+class ClassNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class ClassBlockNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class StaticNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class InstanceNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class ClassVarNode(ASTNode):
+
+    def __init__(self, val):
+        super().__init__(val)
+
+class InstanceVarNode(ASTNode):
+
+    def __init__(self, val):
+        super().__init__(val)
+
+class FieldNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+class NilNode(ASTNode):
+
+    def __init__(self):
+        super().__init__()
+
+
+
+
+        
