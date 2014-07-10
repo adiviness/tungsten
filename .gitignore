@@ -4,3 +4,4 @@ parsetab.py
 output.*
 test.*
 *.w
+testing/
