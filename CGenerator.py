@@ -50,13 +50,18 @@ class CGenerator:
         fp = open(output_file_name, 'w')
         fp.close()
         output_file = open(output_file_name, 'r+')
-        print("#include <stdbool.h>", file=output_file)
+        print("#include <stdlib.h>", file=output_file)
         print("#include <math.h>", file=output_file)
         print("#include <stdio.h>", file=output_file)
-        print("typedef int Int;", file=output_file)
+        print('#include "Bool.h"', file=output_file)
+        print('#include "Int.h"', file=output_file)
         print("typedef double Float;", file=output_file)
-        print("typedef bool Bool;", file=output_file)
         print("typedef char* String;", file=output_file)
+        # generate classes before main
+        for child in self.root_node.children:
+            if type(child) == ClassNode:
+                self.traverse(child, output_file, 0)
+        self.root_node.children = list(filter(lambda x: type(x) != ClassNode, self.root_node.children))
         # generate functions before main
         for child in self.root_node.children:
             if type(child) == DefNode:
@@ -150,6 +155,32 @@ class CGenerator:
             print("    "*depth, "return ", sep='', end='', file=output_file)
             self.traverse(node.children[0], output_file, depth)
             print(";", file=output_file)
+
+        elif type(node) == ClassNode:
+            class_name = node.children[0].data
+            class_vars = []
+            instance_vars = []
+            for n in node.children[1].children:
+                if type(n) == FieldNode:
+                    if type(n.children[0]) == InstanceVarNode:
+                        instance_vars.append((n.children[0].data, n.children[1].data))
+                    else:
+                        class_vars.append((n.children[0].data, n.children[1].data))
+            # class struct
+            print("    "*depth, "struct %s_Class_Struct {" % class_name, sep='', file=output_file)
+            for class_var in class_vars:
+                print("    "*(depth+1), "%s %s;" % (class_var[1], class_var[0]), sep='', file=output_file)
+            print("    "*depth, "};", sep='', file=output_file)
+            print("    "*depth, "typedef %s_Class_Struct* %s_Class;" % (class_name, class_name), sep='', file=output_file)
+            # object struct
+            print("    "*depth, "struct %s_Object_Struct {" % class_name, sep='', file=output_file)
+            print("    "*(depth+1), "%s_Class class;" % class_name, sep='', file=output_file)
+            for instance_var in instance_vars:
+                print("    "*(depth+1), "%s %s;" % (instance_var[1], instance_var[0]), sep='', file=output_file)
+            print("    "*depth, "};", sep='', file=output_file)
+            print("    "*depth, "typedef %s_Object_Struct* %s;" % (class_name, class_name), sep='', file=output_file)
+                
+                    
             
         else:
             print(node.data, end='', file=output_file)
