@@ -1,8 +1,6 @@
 
 import sys, os.path
 
-#from parser.parser import parse
-
 import parser.parser as parser
 from parser.ast import AST
 from parser.nodes import *
@@ -21,8 +19,7 @@ class Runner:
         self.ast.write_graphing_data("output")
 
 
-
-
+        
 if __name__ == "__main__":
     output_file_prefix = "output"
     if len(sys.argv) >= 2:

@@ -47,9 +47,9 @@ class ASTNode:
 
 class BinaryOpNode(ASTNode):
 
-    def __init__(self, value, precedence):
+    def __init__(self, precedence):
         '''the closer to 0 precedence is, the earlier its operation is applied'''
-        super().__init__(value)
+        super().__init__()
         self.precedence = precedence
 
 class UnaryOpNode(ASTNode):
@@ -164,6 +164,13 @@ class GreaterThanEqualNode(BinaryOpNode):
 
     def __init__(self):
         super().__init__(COMPARISION_PRECEDENCE)
+
+class AttributeAccessorNode(BinaryOpNode):
+
+    def __init__(self, struct, accessor):
+        BinaryOpNode.__init__(self, 2)
+        self.give_child(struct)
+        self.give_child(accessor)
 
 class NotNode(UnaryOpNode):
 

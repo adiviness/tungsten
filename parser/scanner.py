@@ -1,5 +1,4 @@
 
-#import ply.lex as lex
 from enum import Enum
 import re, sys
 
@@ -55,13 +54,14 @@ class TokenType(Enum):
     ASSIGN = 44
     CLASS_VAR = 45
     INSTANCE_VAR = 46
+    ATTRIBUTE_ACCESSOR = 47
     # built ins
-    IDENTIFIER = 47
-    INTEGER = 48
-    FLOAT = 49
-    STRING = 50
+    IDENTIFIER = 48
+    INTEGER = 49
+    FLOAT = 50
+    STRING = 51
     # whitespace
-    IGNORE = 51
+    IGNORE = 52
 
 matchers = {
     TokenType.TRUE: r'true',
@@ -112,7 +112,8 @@ matchers = {
     TokenType.COMMA: r'\,',
     TokenType.STRING: r'".*?"',
     TokenType.CLASS_VAR: r'@@',
-    TokenType.INSTANCE_VAR: r'@'
+    TokenType.INSTANCE_VAR: r'@',
+    TokenType.ATTRIBUTE_ACCESSOR: r'\.'
 }
 
 class Token():

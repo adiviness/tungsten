@@ -230,6 +230,10 @@ class Parser:
             var_name_node = InstanceVarNode(self.consume(TokenType.IDENTIFIER).value)
             assign_node.give_child(var_name_node)
             self.consume(TokenType.ASSIGN)
+        if self.matchN(TokenType.ATTRIBUTE_ACCESSOR, 1):
+            var_name_node = self.attribute_accessor()
+            assign_node.give_child(var_name_node)
+            self.consume(TokenType.ASSIGN)
         else:
             var_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
             assign_node.give_child(var_name_node)
@@ -375,6 +379,8 @@ class Parser:
         elif self.match(TokenType.IDENTIFIER):
             if self.matchN(TokenType.L_BRACKET, 1):
                 return self.array()
+            elif self.matchN(TokenType.ATTRIBUTE_ACCESSOR, 1):
+                return self.attribute_accessor()
             else:
                 token = self.consume(TokenType.IDENTIFIER)
                 return IDNode(token.value)
@@ -432,6 +438,17 @@ class Parser:
         elif self.match(TokenType.GREATER_THAN_EQUAL):
             token = self.consume(TokenType.GREATER_THAN_EQUAL)
             return GreaterThanEqualNode()
+            
+    def attribute_accessor(self):
+        struct_token = IDNode(self.consume(TokenType.IDENTIFIER).value)
+        self.consume(TokenType.ATTRIBUTE_ACCESSOR)
+        attribute_token = IDNode(self.consume(TokenType.IDENTIFIER).value)
+        node = AttributeAccessorNode(struct_token, attribute_token)
+        while self.match(TokenType.ATTRIBUTE_ACCESSOR):
+            self.consume(TokenType.ATTRIBUTE_ACCESSOR)
+            node = AttributeAccessorNode(node, IDNode(self.consume(TokenType.IDENTIFIER).value))
+        return node
+
             
         
     

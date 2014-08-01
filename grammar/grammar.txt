@@ -19,6 +19,7 @@ declaration : IDENTIFIER IDENTIFIER ASSIGN expression
     | IDENTIFIER ASSIGN expression
     | CLASS_VAR IDENTIFIER ASSIGN expression
     | INSTANCE_VAR IDENTIFIER ASSIGN expression
+    | attribute_accessor ASSIGN expression
 
 if : IF expression COLON NEWLINE block elif
     | IF expression COLON NEWLINE block elif ELSE block 
@@ -81,6 +82,9 @@ binary_op : PLUS
 unary_op : MINUS
     | NOT
 
+attribute_accessor: IDENTIFIER ATTRIBUTE_ACCESSOR attribute_accessor
+    | IDENTIFIER ATTRIBUTE_ACCESSOR IDENTIFIER
+
 val : INTEGER
     | FLOAT
     | TRUE
@@ -90,3 +94,4 @@ val : INTEGER
     | array
     | CLASS_VAR IDENTIFIER
     | INSTANCE_VAR IDENTIFIER
+    | attribute_accessor
