@@ -2,6 +2,7 @@
 import sys, os.path
 
 from parser import parse
+from AST import AST
 from semantic_checker import SemanticChecker
 from CGenerator import CGenerator
 from nodes import *
@@ -12,12 +13,11 @@ class Runner:
     def __init__(self, output_file_prefix):
         self.root = None
         self.output_file_prefix = output_file_prefix
-        self.semantic_checker = SemanticChecker()
+        self.ast = None
         
     def run(self):
         self.root = parse()
-        #self.semantic_checker.build_symbol_table(self.root)
-        #self.pprint(self.root)
+        self.ast = AST(self.root)
         self.write_graphing_data()
         cGenerator = CGenerator(self.root, self.output_file_prefix)
         cGenerator.generate()
@@ -46,14 +46,6 @@ class Runner:
         for child in node.children:
             self._write_node_children(output_file, child)
 
-    def pprint(self, node, depth = 0):
-        '''pretty prints tree with node as root'''
-        if node == None:
-            return
-        print('  ' * depth, "node_id:%s %s data:%s" % (node.node_id, node.__class__.__name__, str(node.data)), sep='')
-        for child in node.children:
-            self.pprint(child, depth + 1)
-        
 
 
 if __name__ == "__main__":

@@ -1,4 +1,18 @@
 
+COMPARISION_PRECEDENCE = 7
+# Operator Precedence
+# -------------------
+# 1. ()
+# 2. x.attribute
+# 3. **
+# 4. -x
+# 5. *, /, %
+# 6. +, -
+# 7. ==, !=, <, <=, >, >=
+# 8. not
+# 9. and
+#10. or
+
 class ASTNode:
 
     count = 0
@@ -30,6 +44,19 @@ class ASTNode:
             self.children[-1].right_sibling = child
         child.parent = self
         self.children.append(child)
+
+class BinaryOpNode(ASTNode):
+
+    def __init__(self, value, precedence):
+        '''the closer to 0 precedence is, the earlier its operation is applied'''
+        super().__init__(value)
+        self.precedence = precedence
+
+class UnaryOpNode(ASTNode):
+
+    def __init__(self, value, precedence):
+        super().__init__(value)
+        self.precedence = precedence
         
 class IntNode(ASTNode):
 
@@ -68,80 +95,80 @@ class BlockNode(ASTNode):
     def __init__(self):
         super().__init__()
 
-class PlusNode(ASTNode):
+class PlusNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(6)
 
-class MinusNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class MultiplyNode(ASTNode):
+class MinusNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(6)
 
-class DivideNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class ModNode(ASTNode):
+class MultiplyNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(5)
 
-class ExponentNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class AndNode(ASTNode):
+class DivideNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(5)
 
-class OrNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class EqualNode(ASTNode):
+class ModNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(5)
 
-class NotEqualNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class LessThanNode(ASTNode):
+class ExponentNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(3)
 
-class LessThanEqualNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class GreaterThanNode(ASTNode):
+class AndNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(8)
 
-class GreaterThanEqualNode(ASTNode):
-
-    def __init__(self):
-        super().__init__()
-
-class NotNode(ASTNode):
+class OrNode(BinaryOpNode):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(10)
+
+class EqualNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class NotEqualNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class LessThanNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class LessThanEqualNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class GreaterThanNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class GreaterThanEqualNode(BinaryOpNode):
+
+    def __init__(self):
+        super().__init__(COMPARISION_PRECEDENCE)
+
+class NotNode(UnaryOpNode):
+
+    def __init__(self):
+        super().__init__(8)
 
 class BoolNode(ASTNode):
 

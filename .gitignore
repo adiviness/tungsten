@@ -5,3 +5,4 @@ output.*
 test.*
 *.w
 testing/
+__pycache__/
