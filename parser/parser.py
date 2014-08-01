@@ -1,8 +1,8 @@
 
 import sys
 
-from scanner import Scanner, TokenType
-from nodes import *
+from parser.scanner import Scanner, TokenType
+from parser.nodes import *
 
 def parse():
     input_text = ''

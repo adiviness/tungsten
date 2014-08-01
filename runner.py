@@ -1,11 +1,11 @@
 
 import sys, os.path
 
-from parser import parse
-from AST import AST
-from semantic_checker import SemanticChecker
-from CGenerator import CGenerator
-from nodes import *
+#from parser.parser import parse
+
+import parser.parser as parser
+from parser.ast import AST
+from parser.nodes import *
 
 
 class Runner:
@@ -16,11 +16,9 @@ class Runner:
         self.ast = None
         
     def run(self):
-        self.root = parse()
+        self.root = parser.parse()
         self.ast = AST(self.root)
         self.write_graphing_data()
-        cGenerator = CGenerator(self.root, self.output_file_prefix)
-        cGenerator.generate()
 
     def write_graphing_data(self):
         output_file = open("%s.out" % self.output_file_prefix, 'w')
