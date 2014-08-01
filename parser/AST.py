@@ -1,4 +1,6 @@
 
+from parser.nodes import *
+
 class AST:
 
     def __init__(self, root):
@@ -11,6 +13,31 @@ class AST:
         print('  ' * depth, "node_id:%s %s data:%s" % (node.node_id, node.__class__.__name__, str(node.data)), sep='')
         for child in node.children:
             self.pprint(child, depth + 1)
+
+    def write_graphing_data(self, filename):
+        '''writes ast data for parse-tree-to-graphvis.py'''
+        output_file = open("%s.out" % filename, 'w')
+        self._write_node_ids(output_file, self.root)
+        print('', file=output_file)
+        self._write_node_children(output_file, self.root)
+
+    def _write_node_ids(self, output_file, node):
+        # need to escape " on strings
+        if type(node) == StringNode:
+            print(node.node_id, "%s:" % node.__class__.__name__, node.data.replace('"', '\\"'), file=output_file)
+        elif node.data != None:
+            print(node.node_id, "%s:" % node.__class__.__name__, node.data, file=output_file)
+        else:
+            print(node.node_id, "%s" % node.__class__.__name__, file=output_file)
+        for child in node.children:
+            self._write_node_ids(output_file, child)
+
+    def _write_node_children(self, output_file, node):
+        children_ids = map(lambda x: str(x.node_id), node.children)
+        children_ids = ' '.join(children_ids)
+        print(str(node.node_id), children_ids, file=output_file)
+        for child in node.children:
+            self._write_node_children(output_file, child)
         
 
 # TODO copied from previous project, rework for this project
