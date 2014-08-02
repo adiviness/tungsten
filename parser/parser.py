@@ -1,5 +1,5 @@
 
-import sys
+import sys 
 
 from parser.scanner import Scanner, TokenType
 from parser.nodes import *
@@ -52,6 +52,11 @@ class Parser:
     def error(self, tokenType):
             print("parse error on line %d" % self.line_number, file=sys.stderr)
             print("expected", tokenType, "but received", self.tokens[0].kind, "with value:", self.tokens[0].value, file=sys.stderr)
+            rest_of_line = ''
+            while self.tokens[0].kind != TokenType.NEWLINE:
+                rest_of_line += self.tokens[0].value
+                self.tokens = self.tokens[1:]
+            print("rest of line:", rest_of_line)
             exit(1)
 
     def parse(self, tokens):
@@ -230,7 +235,7 @@ class Parser:
             var_name_node = InstanceVarNode(self.consume(TokenType.IDENTIFIER).value)
             assign_node.give_child(var_name_node)
             self.consume(TokenType.ASSIGN)
-        if self.matchN(TokenType.ATTRIBUTE_ACCESSOR, 1):
+        elif self.matchN(TokenType.ATTRIBUTE_ACCESSOR, 1):
             var_name_node = self.attribute_accessor()
             assign_node.give_child(var_name_node)
             self.consume(TokenType.ASSIGN)
