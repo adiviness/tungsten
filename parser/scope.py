@@ -17,7 +17,12 @@ class Scope:
         self.symbols[symbol.name] = symbol
 
     def resolve(self, name):
-        return  self.symbols[name]
+        if name in self.symbols.keys():
+            return  self.symbols[name]
+        elif self.parent != None:
+            return self.parent.resolve(name)
+        else:
+            return None
 
 class LocalScope(Scope):
 
@@ -48,11 +53,16 @@ class FunctionSymbol(Symbol, Scope):
         super(Symbol, self).__init__(name, SymbolType.FUNCTION)
         self.args = args
         self.parent = parent
-        self.scope = LocalScope(self)
         self.name = name
         self.symbols = {}
         for arg in args:
-            self.scope.define(arg)
+            self.define(arg)
+
+    def resolve(self, name):
+        if name in self.symbols.keys():
+            return  self.symbols[name]
+        else:
+            return self.parent.resolve(name)
 
 class ClassSymbol(Symbol, Scope):
 
