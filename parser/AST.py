@@ -14,6 +14,9 @@ class AST:
         for child in node.children:
             self.pprint(child, depth + 1)
 
+    def run_transformations(self):
+        self.fix_negative_nodes(self.root)
+
     def write_graphing_data(self, filename):
         '''writes ast data for parse-tree-to-graphvis.py'''
         output_file = open("%s.out" % filename, 'w')
@@ -38,6 +41,35 @@ class AST:
         print(str(node.node_id), children_ids, file=output_file)
         for child in node.children:
             self._write_node_children(output_file, child)
+
+    def replace_node(self, node, new_node_type):
+        new_node = new_node_type()
+        new_node.children = node.children
+        new_node.parent = node.parent
+        new_node.right_sibling = node.right_sibling
+        new_node.leftmost_sibling = node.leftmost_sibling
+        new_node.data = node.data
+        index = node.parent.children.index(node)
+        node.parent.children[index] = new_node
+        if index == 0:
+            for child in node.parent.children:
+                child.leftmost_sibling = new_node
+        else:
+            node.parent.children[index - 1].right_sibling = new_node
+
+    def fix_negative_nodes(self, node):
+        if type(node) == MinusNode and len(node.children) == 1:
+            self.replace_node(node, NegNode)
+        for child in node.children:
+            self.fix_negative_nodes(child)
+
+    def fix_arithmetic_expressions(self, node):
+        if type(node) in [BinaryOpNode, UnaryOpNode]:
+            self.makeArithmeticTree(node)
+        else:
+            for child in node.children:
+                self.fix_arithmetic_expressions(child)
+        
         
 
 # TODO copied from previous project, rework for this project

@@ -17,6 +17,8 @@ class Runner:
         self.root = parser.parse()
         self.ast = AST(self.root)
         self.ast.write_graphing_data("output")
+        self.ast.run_transformations()
+        self.ast.write_graphing_data("after")
 
 
         

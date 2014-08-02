@@ -54,8 +54,8 @@ class BinaryOpNode(ASTNode):
 
 class UnaryOpNode(ASTNode):
 
-    def __init__(self, value, precedence):
-        super().__init__(value)
+    def __init__(self, precedence):
+        super().__init__()
         self.precedence = precedence
         
 class IntNode(ASTNode):
@@ -176,6 +176,11 @@ class NotNode(UnaryOpNode):
 
     def __init__(self):
         super().__init__(8)
+
+class NegNode(UnaryOpNode):
+
+    def __init__(self):
+        super().__init__(4)
 
 class BoolNode(ASTNode):
 

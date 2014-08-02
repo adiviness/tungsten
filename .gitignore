@@ -1,5 +1,7 @@
 
+*.pyc
 *.out
+*.png
 parsetab.py
 output.*
 test.*
