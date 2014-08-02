@@ -21,13 +21,18 @@ class SymbolTable:
         if type(node) == BlockNode:
             self.current_scope = LocalScope(self.current_scope)
             print("new local scope")
+            for child in node.children:
+                self.traverse(child)
+            # close scope
+            if self.current_scope != self.global_scope:
+                self.current_scope = self.current_scope.parent
+                print("closing local scope")
         elif type(node) == AssignNode:
             self.assign_node(node)
             print("adding symbol", node.children[0].data)
             return
         elif type(node) == IDNode:
             self.id_node(node)
-            print("symbol %s referenced" % node.data)
             return
         elif type(node) == IntNode:
             return
@@ -37,17 +42,16 @@ class SymbolTable:
         elif type(node) == ReturnNode:
             self.traverse(node.children[0])
             return
+        elif type(node) == CallNode:
+            for child in node.children:
+                self.id_node(child)
+            return
         # check children
-        for child in node.children:
-            self.traverse(child)
-        # close scope
-        if self.current_scope != self.global_scope:
-            self.current_scope = self.current_scope.parent
-            print("closing local scope")
 
 
     def assign_node(self, node):
         if len(node.children) == 3:
+            self.id_node(node.children[1])
             symbol = VariableSymbol(node.children[0].data, node.children[1].data)
             self.current_scope.define(symbol)
         else:
@@ -59,6 +63,7 @@ class SymbolTable:
         ref = self.current_scope.resolve(node.data)
         if ref == None:
             self.not_declared(node.data)
+        print("symbol %s referenced" % node.data)
 
     def def_node(self, node):
         args = []
@@ -66,7 +71,10 @@ class SymbolTable:
         for index in range(1, len(node.children)-2, 2):
             args.append(VariableSymbol(node.children[index].data, node.children[index+1].data))
             print("adding symbol", node.children[index].data)
+            self.id_node(node.children[index+1])
+        self.id_node(node.children[-2])
         symbol = FunctionSymbol(node.children[0].data, node.children[-2].data, args, self.current_scope)
+        self.current_scope.define(symbol)
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing function scope")
