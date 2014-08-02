@@ -16,6 +16,7 @@ class AST:
 
     def run_transformations(self):
         self.fix_negative_nodes(self.root)
+        self.fix_arithmetic_expressions(self.root)
 
     def write_graphing_data(self, filename):
         '''writes ast data for parse-tree-to-graphvis.py'''
@@ -42,83 +43,60 @@ class AST:
         for child in node.children:
             self._write_node_children(output_file, child)
 
-    def replace_node(self, node, new_node_type):
-        new_node = new_node_type()
-        new_node.children = node.children
-        new_node.parent = node.parent
-        new_node.right_sibling = node.right_sibling
-        new_node.leftmost_sibling = node.leftmost_sibling
-        new_node.data = node.data
-        index = node.parent.children.index(node)
-        node.parent.children[index] = new_node
-        if index == 0:
-            for child in node.parent.children:
-                child.leftmost_sibling = new_node
-        else:
-            node.parent.children[index - 1].right_sibling = new_node
-
     def fix_negative_nodes(self, node):
         if type(node) == MinusNode and len(node.children) == 1:
-            self.replace_node(node, NegNode)
+            negNode = NegNode()
+            negNode.children = node.children
+            node.parent.replace(node, negNode)
         for child in node.children:
             self.fix_negative_nodes(child)
 
     def fix_arithmetic_expressions(self, node):
-        if type(node) in [BinaryOpNode, UnaryOpNode]:
-            self.makeArithmeticTree(node)
+        if (issubclass(type(node), BinaryOpNode)
+            or issubclass(type(node), UnaryOpNode)):
+
+            parent = node.parent
+            print(node)
+            print(parent)
+            new_node = self.makeArithmeticTree(node)
+            parent.replace(node, new_node)
         else:
             for child in node.children:
                 self.fix_arithmetic_expressions(child)
-        
-        
 
-# TODO copied from previous project, rework for this project
-#
-#    def fix_arithmetic_expressions(node):
-#        if issubclass(type(node), BinaryOpNode):
-#            parent = node.getParent()
-#            node = self.makeArithmeticTree(node)
-#        else:
-#            for child in node.getChildren():
-#                self.transformArithmetic(child)
-#
-#
-#    def makeArithmeticTree(self, node):
-#        operaterPrecedence = [[MultNode, DivNode],
-#                              [PlusNode, MinusNode],
-#                              [ShiftLNode, ShiftRNode]
-#
-#        ]
-#        xs = self.flattenTree(node)
-#        for n in xs:
-#            n.destroyFamily()
-#        for ops in operaterPrecedence:
-#            index = 0
-#            while index < len(xs):
-#                if type(xs[index]) in ops:
-#                    node = xs[index]
-#                    right = xs.pop(index + 1)
-#                    left = xs.pop(index - 1)
-#                    node.setLeftmostChild(left)
-#                    left.setRightSib(right)
-#                    right.setParent(node)
-#                    left.setParent(node)
-#                else:
-#                    index += 1
-#
-#        return xs[0]
-#
-#
-#
-#    def flattenTree(self, node):
-#        if node == None:
-#            return []
-#        left = node.getLeftmostChild()
-#        if left == None:
-#            return [node]
-#        xs = []
-#        right = left.getRightSib()
-#        xs += self.flattenTree(left) + [node] + self.flattenTree(right)
-#        node.destroyFamily()
-#        return xs
-#    
+    def flattenTree(self, node):
+        if node == None:
+            return []
+        if len(node.children) == 0:
+            return [node]
+        xs = []
+        xs += self.flattenTree(node.children[0]) + [node]
+        if len(node.children) > 1:
+            xs += self.flattenTree(node.children[1])
+        node.disassociate()
+        return xs
+        
+    def makeArithmeticTree(self, node):
+        flat_tree = self.flattenTree(node)
+        for x in flat_tree:
+            x.disassociate()
+            x.children = []
+        for precedence in range(1, 11):
+            index = 0
+            while index < len(flat_tree):
+                if (hasattr(flat_tree[index], 'precedence')
+                    and flat_tree[index].precedence == precedence):
+
+                    parent = flat_tree[index]
+                    if (issubclass(type(parent), UnaryOpNode)):
+                        left = flat_tree.pop(index - 1)
+                        parent.give_child(left)
+                    else:
+                        right = flat_tree.pop(index + 1)
+                        left = flat_tree.pop(index - 1)
+                        parent.give_child(left)
+                        parent.give_child(right)
+                else:
+                    index += 1
+        return flat_tree[0]
+

@@ -45,6 +45,20 @@ class ASTNode:
         child.parent = self
         self.children.append(child)
 
+    def replace(self, old, new):
+        '''puts new node where old one is in children, adjusts other children's siblings to it as necessary'''
+        index = self.children.index(old)
+        self.children[index] = new
+        new.parent = self 
+        if index == 0:
+            for child in self.children:
+                child.leftmost_sibling = new
+        else:
+            self.children[index-1].right_sibling = new
+        new.right_sibling = None
+        if index + 1 < len(self.children):
+            new.right_sibling = self.children[index+1]
+
 class BinaryOpNode(ASTNode):
 
     def __init__(self, precedence):
