@@ -4,6 +4,7 @@ import sys, os.path
 import parser.parser as parser
 from parser.ast import AST
 from parser.nodes import *
+from parser.semantic_checker import *
 
 
 class Runner:
@@ -16,9 +17,10 @@ class Runner:
     def run(self):
         self.root = parser.parse()
         self.ast = AST(self.root)
-        self.ast.write_graphing_data("output")
         self.ast.run_transformations()
-        self.ast.write_graphing_data("after")
+        self.ast.write_graphing_data("output")
+        semantic_checker = SemanticChecker(self.ast)
+        
 
 
         

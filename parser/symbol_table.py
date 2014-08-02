@@ -1,51 +1,62 @@
 
-from namespace import Namespace
+import sys
+from parser.scope import *
+from parser.nodes import *
 
 class SymbolTable:
 
     def __init__(self):
-        self.scopes = []
-        self.namespace = Namespace()
-
-    def open_scope(self):
-        '''creates a new scope in symbol table'''
-        self.scopes.append({})
-
-    def close_scope(self):
-        '''removes most recent scope from symbol table'''
-        self.scopes.pop()
-
-    def declared_locally(self, symbol):
-        '''returns true if symbol is already declared in most recent scope'''
-        symbol = self._normalize_symbol(symbol)
-        return symbol in self.scopes[-1]
-
-    def enter_symbol(self, name, type_, value):
-        '''enters symbol into most recent scope'''
-        namespace_node = self.namespace.add_word(name)
-        self.scopes[-1][namespace_node] = (type_, value)
+        self.current_scope = None
+        self.global_scope = GlobalScope()
 
 
-    def retrieve_symbol(self, symbol):
-        '''returns data about symbol if it exists in a scope, else None'''
-        symbol = self._normalize_symbol(symbol)
-        index = len(self.scopes) - 1
-        while index >= 0:
-            if symbol in self.scopes[index]:
-                return self.scopes[index][symbol]
-            index -= 1
-        return None
+    def harvest_symbols(self, node):
+        self.current_scope = self.global_scope
+        print("global scope")
+        for child in node.children:
+            self.traverse(child)
+        print("closing global scope")
 
-    def get_type(self, symbol):
-        '''gets type of symbol'''
-        return self.retrieve_symbol(symbol)[0]
+    def traverse(self, node):
+        if type(node) == BlockNode:
+            self.current_scope = LocalScope(self.current_scope)
+            print("new local scope")
+        elif type(node) == AssignNode:
+            self.assign_node(node)
+            print("adding symbol", node.children[0].data)
+            return
+        elif type(node) == IDNode:
+            self.id_node(node)
+            print("symbol %s referenced" % node.data)
+            return
+        elif type(node) == IntNode:
+            return
 
-    def get_value(self, symbol):
-        '''gets value of symbol'''
-        return self.retrieve_symbol(symbol)[1]
-        
-    def _normalize_symbol(self, symbol):
-        if type(symbol) == str:
-            symbol = self.namespace.find(symbol)
-        return symbol
-    
+        # check children
+        for child in node.children:
+            self.traverse(child)
+        # close scope
+        if self.current_scope != self.global_scope:
+            self.current_scope = self.current_scope.parent
+            print("closing local scope")
+
+
+    def assign_node(self, node):
+        if len(node.children) == 3:
+            symbol = VariableSymbol(node.children[0].data, node.children[1].data)
+            self.current_scope.define(symbol)
+        else:
+            self.id_node(node.children[0].data)
+        for child in node.children[-1].children:
+            self.traverse(child)
+
+    def id_node(self, node):
+        ref = self.current_scope.resolve(node.data)
+        if ref == None:
+            self.not_declared(node)
+
+    def not_declared(self, name):
+        print(name, "was not given a type before use", file=sys.stderr)
+        exit(1)
+            
+
