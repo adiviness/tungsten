@@ -48,9 +48,8 @@ class VariableSymbol(Symbol):
 
 class FunctionSymbol(Symbol, Scope):
 
-    # TODO
-    def __init__(self, name, args, parent):
-        super(Symbol, self).__init__(name, SymbolType.FUNCTION)
+    def __init__(self, name, type_, args, parent):
+        super(Symbol, self).__init__(name, type_)
         self.args = args
         self.parent = parent
         self.name = name

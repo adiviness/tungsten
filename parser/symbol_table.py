@@ -66,7 +66,7 @@ class SymbolTable:
         for index in range(1, len(node.children)-2, 2):
             args.append(VariableSymbol(node.children[index].data, node.children[index+1].data))
             print("adding symbol", node.children[index].data)
-        symbol = FunctionSymbol(node.children[0].data, args, self.current_scope)
+        symbol = FunctionSymbol(node.children[0].data, node.children[-2].data, args, self.current_scope)
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing function scope")
