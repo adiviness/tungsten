@@ -30,23 +30,20 @@ class SymbolTable:
         elif type(node) == AssignNode:
             self.assign_node(node)
             print("adding symbol", node.children[0].data)
-            return
         elif type(node) == IDNode:
             self.id_node(node)
-            return
         elif type(node) == IntNode:
-            return
+            pass
         elif type(node) == DefNode:
             self.def_node(node)
-            return
         elif type(node) == ReturnNode:
             self.traverse(node.children[0])
-            return
         elif type(node) == CallNode:
             for child in node.children:
                 self.id_node(child)
-            return
-        # check children
+        else:
+            for child in node.children:
+                self.traverse(child)
 
 
     def assign_node(self, node):
