@@ -19,14 +19,7 @@ class SymbolTable:
 
     def traverse(self, node):
         if type(node) == BlockNode:
-            self.current_scope = LocalScope(self.current_scope)
-            print("new local scope")
-            for child in node.children:
-                self.traverse(child)
-            # close scope
-            if self.current_scope != self.global_scope:
-                self.current_scope = self.current_scope.parent
-                print("closing local scope")
+            self.block_node(node)
         elif type(node) == AssignNode:
             self.assign_node(node)
             print("adding symbol", node.children[0].data)
@@ -45,6 +38,15 @@ class SymbolTable:
             for child in node.children:
                 self.traverse(child)
 
+    def block_node(self, node):
+        self.current_scope = LocalScope(self.current_scope)
+        print("new local scope")
+        for child in node.children:
+            self.traverse(child)
+        # close scope
+        if self.current_scope != self.global_scope:
+            self.current_scope = self.current_scope.parent
+            print("closing local scope")
 
     def assign_node(self, node):
         if len(node.children) == 3:
