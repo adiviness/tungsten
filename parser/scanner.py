@@ -134,16 +134,18 @@ class Scanner():
         self.text = None
         self.tokens = []
         self.matchers = {}
+        self.indent_level = 0
         for tokenType in TokenType:
             if tokenType in [TokenType.INDENT, TokenType.DEDENT]:
                 continue
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
+    # TODO refactor into multiple functions for better readibility
     def scan(self, text):
         self.text = text
         self.tokens = []
-        indent = re.compile("((?:  )*)")
-        indent_level = 0
+        self.indent_level = 0
+        self.indent_level = 0
         while self.text != '':
             found_match = False
             for tokenType in TokenType:
@@ -157,24 +159,30 @@ class Scanner():
                     if tokenType == TokenType.COMMENT:
                         self.tokens[-1] = Token(TokenType.COMMENT, "\n")
                     # check for INDENT or DEDENT
-                    if tokenType == TokenType.NEWLINE: 
-                        match = indent.match(self.text)
-                        new_indent_level = len(match.group(0)) / INDENT_AMOUNT
-                        self.text = self.text[len(match.group(0)):]
-                        while indent_level < new_indent_level:
-                            self.tokens.append(Token(TokenType.INDENT, '  '))
-                            indent_level += 1
-                        while indent_level > new_indent_level:
-                            self.tokens.append(Token(TokenType.DEDENT, '  '))
-                            indent_level -= 1
+                    self._check_new_indentation(tokenType)
                     break
             if not found_match:
                 print("illegal character", self.text[0], "in", self.text[:10], file=sys.stderr)
                 exit(1)
         self._remove_ignore_tokens()
 
+    def _check_new_indentation(self, tokenType):
+        indent_regex = re.compile("((?:  )*)")
+        if tokenType == TokenType.NEWLINE: 
+            match = indent_regex.match(self.text)
+            new_indent_level = len(match.group(0)) / INDENT_AMOUNT
+            self.text = self.text[len(match.group(0)):]
+            while self.indent_level < new_indent_level:
+                self.tokens.append(Token(TokenType.INDENT, '  '))
+                self.indent_level += 1
+            while self.indent_level > new_indent_level:
+                self.tokens.append(Token(TokenType.DEDENT, '  '))
+                self.indent_level -= 1
+
     def _remove_ignore_tokens(self):
         self.tokens = list(filter(lambda x: x.kind not in [TokenType.IGNORE, TokenType.COMMENT], self.tokens))
+
+        
         
 
 
