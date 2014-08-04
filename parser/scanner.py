@@ -158,9 +158,8 @@ class Scanner():
                     continue
                 match = self.matchers[tokenType].match(self.text)
                 if match != None:
-                    self.tokens.append(Token(tokenType, match.group(0)))
-                    self.text = self.text[len(match.group(0)):]
                     found_match = True
+                    self._add_token(tokenType, match.group(0))
                     if tokenType == TokenType.COMMENT:
                         self.tokens[-1] = Token(TokenType.COMMENT, "\n")
                     # check for INDENT or DEDENT
@@ -169,6 +168,10 @@ class Scanner():
             if not found_match:
                 raise IllegalCharacterException(self.text[0])
         self._remove_ignore_tokens()
+
+    def _add_token(self, token_type, text):
+        self.tokens.append(Token(token_type, text))
+        self.text = self.text[len(text):]
 
     def _check_new_indentation(self, tokenType):
         indent_regex = re.compile("((?:  )*)")

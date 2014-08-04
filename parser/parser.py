@@ -1,7 +1,7 @@
 
 import sys
 
-from parser.scanner import Scanner, TokenType
+from parser.scanner import Scanner, TokenType, IllegalCharacterException
 from parser.nodes import *
 
 def parse():
