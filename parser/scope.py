@@ -24,16 +24,26 @@ class Scope:
         else:
             return None
 
+    def class_resolve(self, name):
+        if self.parent == None:
+            return None
+        else:
+            self.parent.class_resolve(name)
+
 class LocalScope(Scope):
 
     def __init__(self, parent):
         super().__init__("Local", parent)
+
 
 class GlobalScope(Scope):
 
     def __init__(self):
         super().__init__("Global")
         self.define(ClassSymbol("Int", self))
+
+    def class_resolve(self, name):
+        return None
 
 class Symbol:
 
@@ -42,6 +52,16 @@ class Symbol:
         self.type_ = type_
 
 class VariableSymbol(Symbol):
+
+    def __init__(self, name, type_):
+        super().__init__(name, type_)
+
+class ClassVariableSymbol(VariableSymbol):
+
+    def __init__(self, name, type_):
+        super().__init__(name, type_)
+
+class InstanceVariableSymbol(VariableSymbol):
 
     def __init__(self, name, type_):
         super().__init__(name, type_)
@@ -72,6 +92,14 @@ class ClassSymbol(Symbol, Scope):
         self.parent = parent_scope
         self.symbols = {}
         self.parent_class = parent_class
+
+    def class_resolve(self, name):
+        if name in self.symbols.keys():
+            return self.symbols[name]
+        elif self.parent_class != None:
+            return self.parent_class.class_resolve(name)
+        else:
+            return None
         
 
 

@@ -34,6 +34,12 @@ class SymbolTable:
         elif type(node) == CallNode:
             for child in node.children:
                 self.id_node(child)
+        elif type(node) == ClassNode:
+            self.class_node(node)
+        elif type(node) == ClassBlockNode:
+            self.class_block_node(node)
+        elif type(node) == ClassVarNode:
+            self.class_var_node(node)
         else:
             for child in node.children:
                 self.traverse(child)
@@ -54,9 +60,11 @@ class SymbolTable:
             symbol = VariableSymbol(node.children[0].data, node.children[1].data)
             self.current_scope.define(symbol)
         else:
-            self.id_node(node.children[0].data)
-        for child in node.children[-1].children:
-            self.traverse(child)
+            if type(node.children[0]) == IDNode:
+                self.id_node(node.children[0])
+            elif type(node.children[0]) == ClassVarNode:
+                self.class_var_node(node.children[0])
+        self.traverse(self.children[-1])
 
     def id_node(self, node):
         ref = self.current_scope.resolve(node.data)
@@ -77,6 +85,44 @@ class SymbolTable:
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing function scope")
+        self.current_scope = self.current_scope.parent
+
+    def class_node(self, node):
+        print("class scope", node.children[0].data) 
+        symbol = ClassSymbol(node.children[0].data, self.current_scope, None) # TODO should change None to parent class once inheritence is supported
+        self.current_scope.define(symbol)
+        self.current_scope = symbol
+        self.traverse(node.children[-1])
+        print("closing class scope")
+        #print(str(self.current_scope))
+        self.current_scope = self.current_scope.parent
+
+    def class_block_node(self, node):
+        for child in node.children:
+            if type(child) == FieldNode:
+                self.field_node(child)
+            elif type(child) in [StaticNode, InstanceNode]:
+                self.traverse(child)
+
+    def class_var_node(self, node):
+        ref = self.current_scope.class_resolve(node.data)
+        if ref == None:
+            self.not_declared(node.data)
+        print("symbol %s referenced" % node.data)
+    
+
+    def field_node(self, node):
+        type_ = node.children[1].data
+        field_name = node.children[0].data
+        self.id_node(node.children[1])
+        if type(node.children[0] == ClassVarNode):
+            field_symbol = ClassVariableSymbol(field_name, type_)
+            print("adding class variable symbol", field_name)
+        else:
+            field_symbol = InstanceVariableSymbol(field_name, type_)
+            print("adding instance variable symbol", field_name)
+        self.current_scope.define(field_symbol)
+                    
 
     def not_declared(self, name):
         print(name, "was not given a type before use", file=sys.stderr)

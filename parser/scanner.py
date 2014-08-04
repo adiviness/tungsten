@@ -130,8 +130,7 @@ class Token():
 
 class Scanner():
 
-    def __init__(self, text):
-        self.text = text
+    def __init__(self):
         self.tokens = []
         self.matchers = {}
         for tokenType in TokenType:
@@ -139,7 +138,8 @@ class Scanner():
                 continue
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
-    def run(self):
+    def scan(self, text):
+        self.text = text
         indent = re.compile("((?:  )*)")
         indent_level = 0
         while self.text != '':
@@ -168,6 +168,7 @@ class Scanner():
                     break
             if not found_match:
                 print("illegal character", self.text[0], "in", self.text[:10], file=sys.stderr)
+                # TODO should throw exception, not exit program
                 exit(1)
 
     def remove_ignore_tokens(self):
