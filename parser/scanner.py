@@ -130,8 +130,8 @@ class Token():
 
 class Scanner():
 
-    def __init__(self, text):
-        self.text = text
+    def __init__(self):
+        self.text = None
         self.tokens = []
         self.matchers = {}
         for tokenType in TokenType:
@@ -139,7 +139,8 @@ class Scanner():
                 continue
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
-    def run(self):
+    def scan(self, text):
+        self.text = text
         indent = re.compile("((?:  )*)")
         indent_level = 0
         while self.text != '':

@@ -14,8 +14,8 @@ def parse():
     else:
         for line in sys.stdin:
             input_text += line
-    scanner = Scanner(input_text)
-    scanner.run()
+    scanner = Scanner()
+    scanner.scan(input_text)
     scanner.remove_ignore_tokens()
     parser = Parser()
     parser.parse(scanner.tokens)
