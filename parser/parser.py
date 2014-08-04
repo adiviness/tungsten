@@ -16,7 +16,6 @@ def parse():
             input_text += line
     scanner = Scanner()
     scanner.scan(input_text)
-    scanner.remove_ignore_tokens()
     parser = Parser()
     parser.parse(scanner.tokens)
     return parser.root_node

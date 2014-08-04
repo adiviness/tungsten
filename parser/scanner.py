@@ -141,6 +141,7 @@ class Scanner():
 
     def scan(self, text):
         self.text = text
+        self.tokens = []
         indent = re.compile("((?:  )*)")
         indent_level = 0
         while self.text != '':
@@ -170,8 +171,9 @@ class Scanner():
             if not found_match:
                 print("illegal character", self.text[0], "in", self.text[:10], file=sys.stderr)
                 exit(1)
+        self._remove_ignore_tokens()
 
-    def remove_ignore_tokens(self):
+    def _remove_ignore_tokens(self):
         self.tokens = list(filter(lambda x: x.kind not in [TokenType.IGNORE, TokenType.COMMENT], self.tokens))
         
 
