@@ -127,6 +127,10 @@ class Token():
             return "(%s, \\n)" % str(self.kind)
         return "(%s, %s)" % (str(self.kind), self.value)
 
+class IllegalCharacterException(Exception):
+
+    def __init__(self, value):
+        self.value = value
 
 class Scanner():
 
@@ -141,6 +145,7 @@ class Scanner():
             self.matchers[tokenType] = re.compile("(%s)" % matchers[tokenType])
 
     # TODO refactor into multiple functions for better readibility
+    # should count line numbers
     def scan(self, text):
         self.text = text
         self.tokens = []
@@ -162,8 +167,7 @@ class Scanner():
                     self._check_new_indentation(tokenType)
                     break
             if not found_match:
-                print("illegal character", self.text[0], "in", self.text[:10], file=sys.stderr)
-                exit(1)
+                raise IllegalCharacterException(self.text[0])
         self._remove_ignore_tokens()
 
     def _check_new_indentation(self, tokenType):

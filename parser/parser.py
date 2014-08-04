@@ -15,7 +15,11 @@ def parse():
         for line in sys.stdin:
             input_text += line
     scanner = Scanner()
-    scanner.scan(input_text)
+    try:
+        scanner.scan(input_text)
+    except IllegalCharacterException as e:
+        print("illegal character", e.value, file=sys.stderr)
+        exit(1)
     parser = Parser()
     parser.parse(scanner.tokens)
     return parser.root_node

@@ -28,6 +28,9 @@ class TestScanner(unittest.TestCase):
         self.assertEqual(len(list(filter(lambda x: x.kind == TokenType.INDENT, self.scanner.tokens))), 1)
         self.assertEqual(len(list(filter(lambda x: x.kind == TokenType.DEDENT, self.scanner.tokens))), 1)
         
+    def test_exception_on_illegal_input(self):
+        with self.assertRaises(IllegalCharacterException):
+            self.scanner.scan("&test Int = 3")
 
 if __name__ == '__main__':
     unittest.main()
