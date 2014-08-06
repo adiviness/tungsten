@@ -5,7 +5,7 @@ class SymbolType(Enum):
     CLASS = 1
     FUNCTION = 2
     VARIABLE = 3
-    
+
 class Scope:
 
     def __init__(self, name, parent=None):

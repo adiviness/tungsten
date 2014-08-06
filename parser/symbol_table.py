@@ -3,6 +3,12 @@ import sys
 from parser.scope import *
 from parser.nodes import *
 
+class SymbolNotDeclaredException(Exception):
+
+    def __init__(self, value):
+        self.value = value
+        
+
 class SymbolTable:
 
     def __init__(self):
@@ -15,7 +21,10 @@ class SymbolTable:
         node.scope = self.current_scope
         print("global scope")
         for child in node.children:
-            self.traverse(child)
+            try:
+                self.traverse(child)
+            except SymbolNotDeclaredException as e:
+                print(e.value, "was not given a type before use", file=sys.stderr)
         print("closing global scope")
         # debug
         self.print_table(node)
@@ -135,8 +144,7 @@ class SymbolTable:
                     
 
     def not_declared(self, name):
-        print(name, "was not given a type before use", file=sys.stderr)
-        exit(1)
+        raise SymbolNotDeclaredException(name)
             
     def print_table(self, node):
         if node.scope != None:
