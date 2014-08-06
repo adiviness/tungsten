@@ -150,7 +150,6 @@ class Scanner():
         self.text = text
         self.tokens = []
         self.indent_level = 0
-        self.indent_level = 0
         while self.text != '':
             found_match = False
             for tokenType in TokenType:
