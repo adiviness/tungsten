@@ -85,7 +85,7 @@ class FunctionSymbol(Symbol, Scope):
         self.parent = parent
         self.name = name
         self.symbols = {}
-        self.type_ = "function"
+        self.type_ = type_
         for arg in args:
             self.define(arg)
 
