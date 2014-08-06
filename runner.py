@@ -5,6 +5,7 @@ import parser.parser as parser
 from parser.ast import AST
 from parser.nodes import *
 from parser.semantic_checker import *
+from parser.intermediate_code_generator import IRCodeGenerator
 
 
 class Runner:
@@ -20,6 +21,8 @@ class Runner:
         self.ast.run_transformations()
         self.ast.write_graphing_data("output")
         semantic_checker = SemanticChecker(self.ast)
+        ir_generator = IRCodeGenerator()
+        ir_generator.generate(self.ast, "ir")
         
 
 
