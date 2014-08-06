@@ -31,7 +31,10 @@ class Scope:
             self.parent.class_resolve(name)
 
     def print_scope(self):
-        print("scope:", self.name)
+        if self.parent != None:
+            print("scope:", self.name, "parent:", self.parent.name)
+        else:
+            print("scope:", self.name)
         for key in self.symbols.keys():
             print("  ", self.symbols[key], sep='')
 

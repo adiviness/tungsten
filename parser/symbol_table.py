@@ -56,7 +56,7 @@ class SymbolTable:
         print("new local scope")
         for child in node.children:
             self.traverse(child)
-        node.symbol_tabe = self.current_scope
+        node.scope = self.current_scope
         # close scope
         if self.current_scope != self.global_scope:
             self.current_scope = self.current_scope.parent
