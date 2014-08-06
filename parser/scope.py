@@ -30,6 +30,11 @@ class Scope:
         else:
             self.parent.class_resolve(name)
 
+    def print_scope(self):
+        print("scope:", self.name)
+        for key in self.symbols.keys():
+            print("  ", self.symbols[key], sep='')
+
 class LocalScope(Scope):
 
     def __init__(self, parent):
@@ -50,6 +55,9 @@ class Symbol:
     def __init__(self, name, type_):
         self.name = name
         self.type_ = type_
+
+    def __str__(self):
+        return "%s:%s" % (self.name, self.type_)
 
 class VariableSymbol(Symbol):
 
@@ -92,6 +100,7 @@ class ClassSymbol(Symbol, Scope):
         self.parent = parent_scope
         self.symbols = {}
         self.parent_class = parent_class
+        self.type_ = None
 
     def class_resolve(self, name):
         if name in self.symbols.keys():

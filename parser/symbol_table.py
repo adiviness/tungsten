@@ -12,10 +12,13 @@ class SymbolTable:
 
     def harvest_symbols(self, node):
         self.current_scope = self.global_scope
+        node.scope = self.current_scope
         print("global scope")
         for child in node.children:
             self.traverse(child)
         print("closing global scope")
+        # debug
+        self.print_table(node)
 
     def traverse(self, node):
         if type(node) == BlockNode:
@@ -49,6 +52,7 @@ class SymbolTable:
         print("new local scope")
         for child in node.children:
             self.traverse(child)
+        node.symbol_tabe = self.current_scope
         # close scope
         if self.current_scope != self.global_scope:
             self.current_scope = self.current_scope.parent
@@ -64,7 +68,7 @@ class SymbolTable:
                 self.id_node(node.children[0])
             elif type(node.children[0]) == ClassVarNode:
                 self.class_var_node(node.children[0])
-        self.traverse(self.children[-1])
+        self.traverse(node.children[-1])
 
     def id_node(self, node):
         ref = self.current_scope.resolve(node.data)
@@ -85,6 +89,7 @@ class SymbolTable:
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing function scope")
+        node.symbol_tabe = self.current_scope
         self.current_scope = self.current_scope.parent
 
     def class_node(self, node):
@@ -94,6 +99,7 @@ class SymbolTable:
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing class scope")
+        node.symbol_tabe = self.current_scope
         #print(str(self.current_scope))
         self.current_scope = self.current_scope.parent
 
@@ -128,4 +134,9 @@ class SymbolTable:
         print(name, "was not given a type before use", file=sys.stderr)
         exit(1)
             
+    def print_table(self, node):
+        if node.scope != None:
+            node.scope.print_scope()
+        for child in node.children:
+            self.print_table(child)
 

@@ -24,6 +24,7 @@ class ASTNode:
         self.parent = None
         self.leftmost_sibling = self
         self.node_id = ASTNode.count
+        self.scope = None
         ASTNode.count += 1
 
     def add_right_sibling(self, node):
