@@ -35,6 +35,14 @@ class TestParser(unittest.TestCase):
         self.assertTrue(self.parser.matchN(TokenType.STRING, 0))
         self.assertTrue(self.parser.matchN(TokenType.INTEGER, 2))
 
+    def test_consume(self):
+        while_token = Token(TokenType.WHILE, "while")
+        int_token = Token(TokenType.INTEGER, "7")
+        self.parser.tokens = [while_token, int_token]
+        self.assertEqual(self.parser.consume(TokenType.WHILE), while_token)
+        self.assertEqual(len(self.parser.tokens), 1)
+
+
     
 if __name__ == '__main__':
     unittest.main()
