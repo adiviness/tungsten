@@ -2,6 +2,11 @@
 TODO List
 =======
 
+    - type checking
+    - IR code generation
+    - bytecode generation
+    - stack based vm
+
 Language features to add 
 -------
     - operator assignments (x += 3)
@@ -18,6 +23,11 @@ Scanner
 -------
     - keep track of line numbers
     - refactor scan method
+    - scanner shouldn't find resereved words in parts of valid variable names
+
+Parser
+-------
+    - throw exceptions instead of error method that exits
 
 Testing
 -------
@@ -29,5 +39,4 @@ Testing
 
 Symbol Table
 -------
-    - finish class symbol tables
     - add traversing rules for rest of ast nodes
