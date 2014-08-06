@@ -1,11 +1,6 @@
 
 from enum import Enum
 
-class SymbolType(Enum):
-    CLASS = 1
-    FUNCTION = 2
-    VARIABLE = 3
-
 class Scope:
 
     def __init__(self, name, parent=None):
@@ -99,7 +94,7 @@ class ClassSymbol(Symbol, Scope):
 
     # TODO
     def __init__(self, name, parent_scope, parent_class=None):
-        super(Symbol, self).__init__(name, SymbolType.CLASS)
+        super(Symbol, self).__init__(name, None) # TODO fix None here
         self.name = name
         self.parent = parent_scope
         self.symbols = {}
