@@ -35,8 +35,7 @@ class SymbolTable:
         elif type(node) == ReturnNode:
             self.traverse(node.children[0])
         elif type(node) == CallNode:
-            for child in node.children:
-                self.id_node(child)
+            self.call_node(node)
         elif type(node) == ClassNode:
             self.class_node(node)
         elif type(node) == ClassBlockNode:
@@ -46,6 +45,11 @@ class SymbolTable:
         else:
             for child in node.children:
                 self.traverse(child)
+
+    def call_node(self, node):
+        for child in node.children:
+            if type(child) == IDNode:
+                self.id_node(child)
 
     def block_node(self, node):
         self.current_scope = LocalScope(self.current_scope)
@@ -89,7 +93,7 @@ class SymbolTable:
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing function scope")
-        node.symbol_tabe = self.current_scope
+        node.scope = self.current_scope
         self.current_scope = self.current_scope.parent
 
     def class_node(self, node):
@@ -99,7 +103,7 @@ class SymbolTable:
         self.current_scope = symbol
         self.traverse(node.children[-1])
         print("closing class scope")
-        node.symbol_tabe = self.current_scope
+        node.scope = self.current_scope
         #print(str(self.current_scope))
         self.current_scope = self.current_scope.parent
 

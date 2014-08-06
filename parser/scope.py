@@ -82,6 +82,7 @@ class FunctionSymbol(Symbol, Scope):
         self.parent = parent
         self.name = name
         self.symbols = {}
+        self.type_ = "function"
         for arg in args:
             self.define(arg)
 
@@ -100,7 +101,7 @@ class ClassSymbol(Symbol, Scope):
         self.parent = parent_scope
         self.symbols = {}
         self.parent_class = parent_class
-        self.type_ = None
+        self.type_ = "class"
 
     def class_resolve(self, name):
         if name in self.symbols.keys():
