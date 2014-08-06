@@ -28,7 +28,7 @@ class Scope:
         if self.parent == None:
             return None
         else:
-            self.parent.class_resolve(name)
+            return self.parent.class_resolve(name)
 
     def print_scope(self):
         if self.parent != None:

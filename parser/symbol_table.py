@@ -62,10 +62,10 @@ class SymbolTable:
 
     def block_node(self, node):
         self.current_scope = LocalScope(self.current_scope)
+        node.scope = self.current_scope
         print("new local scope")
         for child in node.children:
             self.traverse(child)
-        node.scope = self.current_scope
         # close scope
         if self.current_scope != self.global_scope:
             self.current_scope = self.current_scope.parent
@@ -77,10 +77,7 @@ class SymbolTable:
             symbol = VariableSymbol(node.children[0].data, node.children[1].data)
             self.current_scope.define(symbol)
         else:
-            if type(node.children[0]) == IDNode:
-                self.id_node(node.children[0])
-            elif type(node.children[0]) == ClassVarNode:
-                self.class_var_node(node.children[0])
+            self.traverse(node.children[0])
         self.traverse(node.children[-1])
 
     def id_node(self, node):
@@ -100,9 +97,9 @@ class SymbolTable:
         symbol = FunctionSymbol(node.children[0].data, node.children[-2].data, args, self.current_scope)
         self.current_scope.define(symbol)
         self.current_scope = symbol
+        node.scope = self.current_scope
         self.traverse(node.children[-1])
         print("closing function scope")
-        node.scope = self.current_scope
         self.current_scope = self.current_scope.parent
 
     def class_node(self, node):
@@ -110,10 +107,9 @@ class SymbolTable:
         symbol = ClassSymbol(node.children[0].data, self.current_scope, None) # TODO should change None to parent class once inheritence is supported
         self.current_scope.define(symbol)
         self.current_scope = symbol
+        node.scope = self.current_scope
         self.traverse(node.children[-1])
         print("closing class scope")
-        node.scope = self.current_scope
-        #print(str(self.current_scope))
         self.current_scope = self.current_scope.parent
 
     def class_block_node(self, node):
