@@ -53,6 +53,7 @@ class Symbol:
     def __init__(self, name, type_):
         self.name = name
         self.type_ = type_
+        self.param_num = None
 
     def __str__(self):
         return "%s:%s" % (self.name, self.type_)
@@ -82,6 +83,7 @@ class FunctionSymbol(Symbol, Scope):
         self.symbols = {}
         self.type_ = type_
         for arg in args:
+            arg.param_num = len(self.symbols.keys())
             self.define(arg)
 
     def resolve(self, name):

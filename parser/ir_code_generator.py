@@ -9,6 +9,7 @@ class IRCodeGenerator():
 
     def __init__(self):
         self.output_file = None
+        self.scopes = []
 
     def generate(self, ast, output_file_prefix):
         self.output_file = open("%s.s" % output_file_prefix, 'w')
@@ -16,7 +17,9 @@ class IRCodeGenerator():
         self.output_file.close()
 
     def traverse(self, node, label_prefix="@Global"):
-        if type(node) == IDNode:
+        if type(node) == BlockNode:
+            self.block_node(node, label_prefix)
+        elif type(node) == IDNode:
             self.id_node(node, label_prefix)
         elif type(node) == IntNode:
             self.int_node(node, label_prefix)
@@ -36,8 +39,18 @@ class IRCodeGenerator():
             for child in node.children:
                 self.traverse(child, label_prefix)
 
+    def block_node(self, node, label_prefix):
+        self.scopes.append(node.scope)
+        for child in node.children:
+            self.traverse(child, label_prefix)
+        self.scopes.pop()
+
     def id_node(self, node, label_prefix):
-        print("push %s%s" % (str(node.data), label_prefix), file=self.output_file)
+        symbol = self.scopes[-1].resolve(str(node.data))
+        if symbol.param_num != None:
+            print("push %s%s" % (symbol.param_num, label_prefix), file=self.output_file)
+        else:
+            print("push %s%s" % (str(node.data), label_prefix), file=self.output_file)
 
     def int_node(self, node, label_prefix):
         print("push", node.data, file=self.output_file)
@@ -46,7 +59,9 @@ class IRCodeGenerator():
         arity = len(node.scope.symbols.keys())
         locals_ = len(node.children[-1].scope.symbols.keys())
         print("def", "%s%s" % (node.scope.name, label_prefix), arity, locals_, file=self.output_file)
+        self.scopes.append(node.scope)
         self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix )
+        self.scopes.pop()
 
     def call_node(self, node, label_prefix):
         for child in node.children[1:]:
