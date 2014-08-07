@@ -36,6 +36,8 @@ class IRCodeGenerator():
             self.binary_op_node(node, label_prefix, "*", LEFT)
         elif type(node) == DivideNode:
             self.binary_op_node(node, label_prefix, "/", LEFT)
+        elif type(node) == ModNode:
+            self.binary_op_node(node, label_prefix, "%", LEFT)
         elif type(node) == ExponentNode:
             self.binary_op_node(node, label_prefix, "**", RIGHT)
         elif type(node) == AndNode:

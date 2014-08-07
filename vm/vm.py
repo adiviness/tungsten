@@ -55,6 +55,10 @@ class VM:
             a = self.operand_stack.pop()
             b = self.operand_stack.pop()
             self.operand_stack.append(b // a)
+        elif instr[0] == "%":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(b % a)
         elif instr[0] == "**":
             a = self.operand_stack.pop()
             b = self.operand_stack.pop()
