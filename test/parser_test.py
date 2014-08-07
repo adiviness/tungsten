@@ -42,7 +42,46 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self.parser.consume(TokenType.WHILE), while_token)
         self.assertEqual(len(self.parser.tokens), 1)
 
+    def test_new_variable_assignment(self):
+        assignment = "test Int = 3"
+        self.scanner.scan(assignment)
+        self.parser.parse(self.scanner.tokens)
+        root_node = self.parser.root_node
+        self.assertEqual(type(root_node), BlockNode)
+        self.assertEqual(len(root_node.children), 1)
+        self.assertEqual(type(root_node.children[0]), AssignNode)
+        assign_node = root_node.children[0]
+        self.assertEqual(len(assign_node.children), 3)
+        self.assertEqual(type(assign_node.children[0]), IDNode)
+        self.assertEqual(type(assign_node.children[1]), IDNode)
+        self.assertEqual(type(assign_node.children[2]), IntNode)
+        self.assertEqual(assign_node.children[0].data, "test")
+        self.assertEqual(assign_node.children[1].data, "Int")
+        self.assertEqual(assign_node.children[2].data, "3")
+
+    def test_existing_variable_assignment(self):
+        assignment = "test = 5"
+        self.scanner.scan(assignment)
+        self.parser.parse(self.scanner.tokens)
+        root_node = self.parser.root_node
+        self.assertEqual(type(root_node), BlockNode)
+        self.assertEqual(len(root_node.children), 1)
+        self.assertEqual(type(root_node.children[0]), AssignNode)
+        assign_node = root_node.children[0]
+        self.assertEqual(len(assign_node.children), 2)
+        self.assertEqual(type(assign_node.children[0]), IDNode)
+        self.assertEqual(type(assign_node.children[1]), IntNode)
+        self.assertEqual(assign_node.children[0].data, "test")
+        self.assertEqual(assign_node.children[1].data, "5")
+
 
     
 if __name__ == '__main__':
     unittest.main()
+
+
+
+
+
+
+    

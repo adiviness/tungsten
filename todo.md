@@ -6,6 +6,7 @@ TODO List
     - IR code generation
     - bytecode generation
     - stack based vm
+    - figure out how to call class/instance methods while inside another class/instance method (do I need a self/this keyword?)
 
 Language features to add 
 -------
