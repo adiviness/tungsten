@@ -24,7 +24,6 @@ class VM:
             if instructions[index][0] == "label":
                 self.named_memory[instructions[index][1]] = len(self.instr_memory) + index
             index += 1
-                                
 
     def execute(self, instr):
         #print(self.instr_pointer)
@@ -106,6 +105,8 @@ class VM:
             self.instr_pointer = self.call_stack.pop()
         elif instr[0] == "jne":
             self.jne_instr(instr)
+        elif instr[0] == "j":
+            self.instr_pointer = self.named_memory[instr[1]]
 
     def jne_instr(self, instr):
         if self.operand_stack.pop() != int(instr[1]):
