@@ -19,22 +19,22 @@ class SymbolTable:
     def harvest_symbols(self, node):
         self.current_scope = self.global_scope
         node.scope = self.current_scope
-        print("global scope")
+        #print("global scope")
         for child in node.children:
             try:
                 self.traverse(child)
             except SymbolNotDeclaredException as e:
                 print(e.value, "was not given a type before use", file=sys.stderr)
-        print("closing global scope")
+        #print("closing global scope")
         # debug
-        self.print_table(node)
+        #self.print_table(node)
 
     def traverse(self, node):
         if type(node) == BlockNode:
             self.block_node(node)
         elif type(node) == AssignNode:
             self.assign_node(node)
-            print("adding symbol", node.children[0].data)
+            #print("adding symbol", node.children[0].data)
         elif type(node) == IDNode:
             self.id_node(node)
         elif type(node) == IntNode:
@@ -63,13 +63,13 @@ class SymbolTable:
     def block_node(self, node):
         self.current_scope = LocalScope(self.current_scope)
         node.scope = self.current_scope
-        print("new local scope")
+        #print("new local scope")
         for child in node.children:
             self.traverse(child)
         # close scope
         if self.current_scope != self.global_scope:
             self.current_scope = self.current_scope.parent
-            print("closing local scope")
+            #print("closing local scope")
 
     def assign_node(self, node):
         if len(node.children) == 3:
@@ -84,14 +84,14 @@ class SymbolTable:
         ref = self.current_scope.resolve(node.data)
         if ref == None:
             self.not_declared(node.data)
-        print("symbol %s referenced" % node.data)
+        #print("symbol %s referenced" % node.data)
 
     def def_node(self, node):
         args = []
-        print("function scope", node.children[0].data)
+        #print("function scope", node.children[0].data)
         for index in range(1, len(node.children)-2, 2):
             args.append(VariableSymbol(node.children[index].data, node.children[index+1].data))
-            print("adding symbol", node.children[index].data)
+            #print("adding symbol", node.children[index].data)
             self.id_node(node.children[index+1])
         self.id_node(node.children[-2])
         symbol = FunctionSymbol(node.children[0].data, node.children[-2].data, args, self.current_scope)
@@ -99,17 +99,17 @@ class SymbolTable:
         self.current_scope = symbol
         node.scope = self.current_scope
         self.traverse(node.children[-1])
-        print("closing function scope")
+        #print("closing function scope")
         self.current_scope = self.current_scope.parent
 
     def class_node(self, node):
-        print("class scope", node.children[0].data) 
+        #print("class scope", node.children[0].data) 
         symbol = ClassSymbol(node.children[0].data, self.current_scope, None) # TODO should change None to parent class once inheritence is supported
         self.current_scope.define(symbol)
         self.current_scope = symbol
         node.scope = self.current_scope
         self.traverse(node.children[-1])
-        print("closing class scope")
+        #print("closing class scope")
         self.current_scope = self.current_scope.parent
 
     def class_block_node(self, node):
@@ -123,7 +123,7 @@ class SymbolTable:
         ref = self.current_scope.class_resolve(node.data)
         if ref == None:
             self.not_declared(node.data)
-        print("symbol %s referenced" % node.data)
+        #print("symbol %s referenced" % node.data)
     
 
     def field_node(self, node):
@@ -132,10 +132,10 @@ class SymbolTable:
         self.id_node(node.children[1])
         if type(node.children[0] == ClassVarNode):
             field_symbol = ClassVariableSymbol(field_name, type_)
-            print("adding class variable symbol", field_name)
+            #print("adding class variable symbol", field_name)
         else:
             field_symbol = InstanceVariableSymbol(field_name, type_)
-            print("adding instance variable symbol", field_name)
+            #print("adding instance variable symbol", field_name)
         self.current_scope.define(field_symbol)
                     
 

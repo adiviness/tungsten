@@ -56,8 +56,6 @@ class AST:
             or issubclass(type(node), UnaryOpNode)):
 
             parent = node.parent
-            print(node)
-            print(parent)
             new_node = self.makeArithmeticTree(node)
             parent.replace(node, new_node)
         else:
