@@ -6,6 +6,7 @@ from parser.ast import AST
 from parser.nodes import *
 from parser.semantic_checker import *
 from parser.ir_code_generator import IRCodeGenerator
+from vm.vm import VM
 
 
 class Runner:
@@ -23,6 +24,13 @@ class Runner:
         semantic_checker = SemanticChecker(self.ast)
         ir_generator = IRCodeGenerator()
         ir_generator.generate(self.ast, "ir")
+        fp = open("ir.s", 'r')
+        lines = []
+        for line in fp:
+            lines += line
+        fp.close
+        vm = VM()
+        vm.run(lines)
         
 
 
