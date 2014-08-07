@@ -32,6 +32,6 @@ class VM:
             self.operand_stack.append(b - a)
         elif instr[0] == "call":
             if instr[1] == "print@Global":
-                print(self.operand_stack[0])
+                print(self.operand_stack.pop())
                 # TODO
         
