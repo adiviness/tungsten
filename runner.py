@@ -5,7 +5,7 @@ import parser.parser as parser
 from parser.ast import AST
 from parser.nodes import *
 from parser.semantic_checker import *
-from parser.intermediate_code_generator import IRCodeGenerator
+from parser.ir_code_generator import IRCodeGenerator
 
 
 class Runner:
