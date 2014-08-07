@@ -43,6 +43,20 @@ class IRCodeGenerator():
             self.binary_op_node(node, label_prefix, "or", LEFT)
         elif type(node) == NotNode:
             self.unary_op_node(node, label_prefix, "not")
+        elif type(node) == EqualNode:
+            self.binary_op_node(node, label_prefix, "==", LEFT)
+        elif type(node) == NotEqualNode:
+            self.binary_op_node(node, label_prefix, "!=", LEFT)
+        elif type(node) == LessThanNode:
+            self.binary_op_node(node, label_prefix, "<", LEFT)
+        elif type(node) == LessThanEqualNode:
+            self.binary_op_node(node, label_prefix, "<=", LEFT)
+        elif type(node) == GreaterThanNode:
+            self.binary_op_node(node, label_prefix, ">", LEFT)
+        elif type(node) == GreaterThanEqualNode:
+            self.binary_op_node(node, label_prefix, ">=", LEFT)
+        elif type(node) == NegNode:
+            self.unary_op_node(node, label_prefix, "neg")
         elif type(node) == DefNode:
             self.def_node(node, label_prefix)
         elif type(node) == ReturnNode:
