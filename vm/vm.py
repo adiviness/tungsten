@@ -12,7 +12,7 @@ class VM:
 
     def run(self, instructions):
         self.instr_memory += instructions
-        print(self.instr_memory)
+        #print(self.instr_memory)
         while self.instr_pointer != len(self.instr_memory):
             self.execute(self.instr_memory[self.instr_pointer])
             self.instr_pointer += 1
@@ -39,6 +39,29 @@ class VM:
             a = self.operand_stack.pop()
             b = self.operand_stack.pop()
             self.operand_stack.append(b - a)
+        elif instr[0] == "*":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(b * a)
+        elif instr[0] == "/":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(b // a)
+        elif instr[0] == "**":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(b ** a)
+        elif instr[0] == "and":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(int(bool(b) and bool(a)))
+        elif instr[0] == "or":
+            a = self.operand_stack.pop()
+            b = self.operand_stack.pop()
+            self.operand_stack.append(int(bool(b) or bool(a)))
+        elif instr[0] == "not":
+            a = self.operand_stack.pop()
+            self.operand_stack.append(int(not bool(a)))
         elif instr[0]  == "def":
             function_name = instr[1]
             self.named_memory[function_name] = self.instr_pointer

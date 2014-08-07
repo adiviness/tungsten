@@ -31,6 +31,18 @@ class IRCodeGenerator():
             self.binary_op_node(node, label_prefix, "+", LEFT)
         elif type(node) == MinusNode:
             self.binary_op_node(node, label_prefix, "-", LEFT)
+        elif type(node) == MultiplyNode:
+            self.binary_op_node(node, label_prefix, "*", LEFT)
+        elif type(node) == DivideNode:
+            self.binary_op_node(node, label_prefix, "/", LEFT)
+        elif type(node) == ExponentNode:
+            self.binary_op_node(node, label_prefix, "**", RIGHT)
+        elif type(node) == AndNode:
+            self.binary_op_node(node, label_prefix, "and", LEFT)
+        elif type(node) == OrNode:
+            self.binary_op_node(node, label_prefix, "or", LEFT)
+        elif type(node) == NotNode:
+            self.unary_op_node(node, label_prefix, "not")
         elif type(node) == DefNode:
             self.def_node(node, label_prefix)
         elif type(node) == ReturnNode:
@@ -85,6 +97,10 @@ class IRCodeGenerator():
         else:
             self.traverse(node.children[1], label_prefix)
             self.traverse(node.children[0], label_prefix)
+        print(operand, file=self.output_file)
+        
+    def unary_op_node(self, node, label_prefix, operand):
+        self.traverse(node.children[0], label_prefix)
         print(operand, file=self.output_file)
 
     def return_node(self, node, label_prefix):
