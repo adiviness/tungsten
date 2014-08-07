@@ -32,7 +32,7 @@ class IRCodeGenerator():
         elif type(node) == DefNode:
             self.def_node(node, label_prefix)
         elif type(node) == ReturnNode:
-            print("return", file=self.output_file)
+            self.return_node(node, label_prefix)
         elif type(node) == CallNode:
             self.call_node(node, label_prefix)
         else:
@@ -77,6 +77,9 @@ class IRCodeGenerator():
             self.traverse(node.children[0], label_prefix)
         print(operand, file=self.output_file)
 
+    def return_node(self, node, label_prefix):
+        self.traverse(node.children[0], label_prefix)
+        print("return", file=self.output_file)
 
     def assign_node(self, node, label_prefix):
         if len(node.children) == 3:
