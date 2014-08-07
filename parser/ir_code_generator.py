@@ -19,7 +19,7 @@ class IRCodeGenerator():
         if type(node) == IDNode:
             self.id_node(node, label_prefix)
         elif type(node) == IntNode:
-            print("push", node.data, file=self.output_file)
+            self.int_node(node, label_prefix)
         elif type(node) == AssignNode:
             self.assign_node(node, label_prefix)
         elif type(node) == PlusNode:
@@ -30,6 +30,8 @@ class IRCodeGenerator():
             self.def_node(node, label_prefix)
         elif type(node) == ReturnNode:
             print("return", file=self.output_file)
+        elif type(node) == CallNode:
+            self.call_node(node, label_prefix)
         else:
             for child in node.children:
                 self.traverse(child, label_prefix)
@@ -37,11 +39,19 @@ class IRCodeGenerator():
     def id_node(self, node, label_prefix):
         print("push %s%s" % (str(node.data), label_prefix), file=self.output_file)
 
+    def int_node(self, node, label_prefix):
+        print("push", node.data, file=self.output_file)
+
     def def_node(self, node, label_prefix):
         arity = len(node.scope.symbols.keys())
         locals_ = len(node.children[-1].scope.symbols.keys())
-        print("def", node.scope.name, arity, locals_, file=self.output_file)
+        print("def", "%s%s" % (node.scope.name, label_prefix), arity, locals_, file=self.output_file)
         self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix )
+
+    def call_node(self, node, label_prefix):
+        for child in node.children[1:]:
+            self.traverse(child, label_prefix)
+        print("call", "%s" % node.children[0].data + label_prefix, file=self.output_file)
         
     def binary_op_node(self, node, label_prefix, operand, associativity):
         if associativity == LEFT:
