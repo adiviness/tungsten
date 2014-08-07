@@ -23,6 +23,8 @@ class IRCodeGenerator():
             self.id_node(node, label_prefix)
         elif type(node) == IntNode:
             self.int_node(node, label_prefix)
+        elif type(node) == BoolNode:
+            self.bool_node(node, label_prefix)
         elif type(node) == AssignNode:
             self.assign_node(node, label_prefix)
         elif type(node) == PlusNode:
@@ -55,13 +57,21 @@ class IRCodeGenerator():
     def int_node(self, node, label_prefix):
         print("push", node.data, file=self.output_file)
 
+    def bool_node(self, node, label_prefix):
+        if node.data == "true":
+            print("push 1", file=self.output_file)
+        else:
+            print("push 0", file=self.output_file)
+            
+
     def def_node(self, node, label_prefix):
         arity = len(node.scope.symbols.keys())
         locals_ = len(node.children[-1].scope.symbols.keys())
         print("def", "%s%s" % (node.scope.name, label_prefix), arity, locals_, file=self.output_file)
         self.scopes.append(node.scope)
-        self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix )
+        self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix)
         self.scopes.pop()
+        print("label end_func@%s" % node.scope.name + label_prefix, file=self.output_file)
 
     def call_node(self, node, label_prefix):
         for child in node.children[1:]:

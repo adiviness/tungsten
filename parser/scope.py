@@ -45,6 +45,7 @@ class GlobalScope(Scope):
         super().__init__("Global")
         self.define(ClassSymbol("Int", self))
         self.define(ClassSymbol("Void", self))
+        self.define(ClassSymbol("Bool", self))
         self.define(FunctionSymbol("print", "Void", [Symbol("x", "Int")], self)) # TODO should be properly defined
 
     def class_resolve(self, name):
