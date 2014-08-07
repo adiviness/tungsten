@@ -92,7 +92,6 @@ class Parser:
         return statement_nodes
 
     def statement(self):
-        #print(self.tokens[0])
         if self.match(TokenType.IF):
             node = self.if_()
         elif self.match(TokenType.WHILE):
@@ -135,8 +134,6 @@ class Parser:
     def class_statements(self):
         statement_nodes = []
         while True:
-            print(self.tokens)
-            print()
             while self.tokens != [] and self.match(TokenType.NEWLINE):
                 self.consume(TokenType.NEWLINE)
                 self.line_number += 1
@@ -159,8 +156,6 @@ class Parser:
                 self.consume(TokenType.INSTANCE)
             self.consume(TokenType.COLON)
             self.consume(TokenType.NEWLINE)
-            print(self.tokens)
-            print()
             block_node = self.block()
             node.children = block_node.children
             return node
@@ -168,11 +163,9 @@ class Parser:
     def class_var_declaration(self):
         node = FieldNode()
         if self.match(TokenType.INSTANCE_VAR):
-            print('instance var')
             self.consume(TokenType.INSTANCE_VAR)
             node.give_child(InstanceVarNode(self.consume(TokenType.IDENTIFIER).value))
         elif self.match(TokenType.CLASS_VAR):
-            print('static var')
             self.consume(TokenType.CLASS_VAR)
             node.give_child(ClassVarNode(self.consume(TokenType.IDENTIFIER).value))
         node.give_child(IDNode(self.consume(TokenType.IDENTIFIER).value))
@@ -251,15 +244,11 @@ class Parser:
                 type_name_node = IDNode(self.consume(TokenType.IDENTIFIER).value)
                 assign_node.give_child(type_name_node)
                 self.consume(TokenType.ASSIGN)
-        print(self.tokens)
-        print()
         assign_node.give_child(self.expression())
         return assign_node
 
     def expression(self):
         # function
-        print(self.tokens)
-        print()
         if self.match(TokenType.IDENTIFIER) and self.matchN(TokenType.L_PAREN, 1):
             node = self.function()
         # val
@@ -357,7 +346,6 @@ class Parser:
         return node
 
     def val(self):
-        #print(self.tokens[0])
         if self.match(TokenType.INTEGER):
             token = self.consume(TokenType.INTEGER)
             return IntNode(token.value)
@@ -394,7 +382,6 @@ class Parser:
                 return IDNode(token.value)
 
     def unary_op(self):
-        #print("unary_op", self.tokens[0])
         if self.match(TokenType.MINUS):
             token = self.consume(TokenType.MINUS)
             return MinusNode()
@@ -403,7 +390,6 @@ class Parser:
             return NotNode()
 
     def binary_op(self):
-        #print(self.tokens[0])
         if self.match(TokenType.PLUS):
             token = self.consume(TokenType.PLUS)
             return PlusNode()
