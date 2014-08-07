@@ -11,11 +11,20 @@ class VM:
         self.instr_pointer = 0
 
     def run(self, instructions):
-        self.instr_memory += instructions
         #print(self.instr_memory)
+        self.gather_labels(instructions)
+        self.instr_memory += instructions
         while self.instr_pointer != len(self.instr_memory):
             self.execute(self.instr_memory[self.instr_pointer])
             self.instr_pointer += 1
+
+    def gather_labels(self, instructions):
+        index = 0
+        while index < len(instructions):
+            if instructions[index][0] == "label":
+                self.named_memory[instructions[index][1]] = len(self.instr_memory) + index
+            index += 1
+                                
 
     def execute(self, instr):
         #print(self.instr_pointer)
@@ -95,6 +104,12 @@ class VM:
             self.call(instr)
         elif instr[0] == "return":
             self.instr_pointer = self.call_stack.pop()
+        elif instr[0] == "jne":
+            self.jne_instr(instr)
+
+    def jne_instr(self, instr):
+        if self.operand_stack.pop() != int(instr[1]):
+            self.instr_pointer = self.named_memory[instr[2]]
                 
         
     def def_instr(self, instr):

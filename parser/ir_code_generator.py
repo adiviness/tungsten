@@ -10,6 +10,7 @@ class IRCodeGenerator():
     def __init__(self):
         self.output_file = None
         self.scopes = []
+        self.label_count = 0
 
     def generate(self, ast, output_file_prefix):
         self.output_file = open("%s.s" % output_file_prefix, 'w')
@@ -63,6 +64,8 @@ class IRCodeGenerator():
             self.return_node(node, label_prefix)
         elif type(node) == CallNode:
             self.call_node(node, label_prefix)
+        elif type(node) == IfNode:
+            self.if_node(node, label_prefix)
         else:
             for child in node.children:
                 self.traverse(child, label_prefix)
@@ -127,3 +130,11 @@ class IRCodeGenerator():
         self.traverse(node.children[-1], label_prefix)
         print("store %s%s"% (str(node.children[0].data), label_prefix), file=self.output_file)
 
+    def if_node(self, node, label_prefix):
+        self.traverse(node.children[0], label_prefix)
+        end_label = "label_%d" % self.label_count
+        self.label_count += 1
+        print("jne 1", end_label, file=self.output_file)
+        self.traverse(node.children[1])
+        print("label", end_label, file=self.output_file)
+        
