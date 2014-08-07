@@ -7,14 +7,18 @@ class VM:
         self.locals_ = []
         self.named_memory = {}
         self.function_info = {}
+        self.instr_memory = []
+        self.instr_pointer = 0
 
     def run(self, instructions):
-        instructions = self._grab_function_definitions(instructions)
-        for instr in instructions:
-            #print(self.operand_stack, self.call_stack)
-            self.execute(instr)
+        self.instr_memory += instructions
+        print(self.instr_memory)
+        while self.instr_pointer != len(self.instr_memory):
+            self.execute(self.instr_memory[self.instr_pointer])
+            self.instr_pointer += 1
 
     def execute(self, instr):
+        #print(self.instr_pointer)
         if instr[0] == "name":
             self.named_memory[instr[1]] = None
         elif instr[0] == "store":
@@ -35,6 +39,17 @@ class VM:
             a = self.operand_stack.pop()
             b = self.operand_stack.pop()
             self.operand_stack.append(b - a)
+        elif instr[0]  == "def":
+            function_name = instr[1]
+            self.named_memory[function_name] = self.instr_pointer
+            self.function_info[instr[1]] = (int(instr[2]), int(instr[3]))
+            next_instr = self.instr_memory[self.instr_pointer + 1]
+            while True:
+            #until next_instr[0] == "label" and "end_func" in next_instr[1]:
+                if next_instr[0] == "label" and "end_func" in next_instr[1]:
+                    break
+                self.instr_pointer += 1
+                next_instr = self.instr_memory[self.instr_pointer + 1]
         elif instr[0] == "call":
             if instr[1] == "print@Global":
                 print(self.operand_stack.pop())
@@ -43,10 +58,11 @@ class VM:
                 self.locals_.append(self.operand_stack[0:local_count])
                 self.locals_[-1].reverse()
                 self.operand_stack = self.operand_stack[local_count:]
-                for i in self.named_memory[instr[1]]:
-                    self.execute(i)
-                self.locals_.pop()
-
+                self.call_stack.append(self.instr_pointer)
+                self.instr_pointer = self.named_memory[instr[1]]
+        elif instr[0] == "return":
+            self.instr_pointer = self.call_stack.pop()
+                
         
 
     def _grab_function_definitions(self, instructions):
