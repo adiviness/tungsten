@@ -66,6 +66,8 @@ class IRCodeGenerator():
             self.call_node(node, label_prefix)
         elif type(node) == IfNode:
             self.if_node(node, label_prefix)
+        elif type(node) == WhileNode:
+            self.while_node(node, label_prefix)
         else:
             for child in node.children:
                 self.traverse(child, label_prefix)
@@ -149,4 +151,32 @@ class IRCodeGenerator():
             print("label", else_label, file=self.output_file)
             self.traverse(node.children[2])
             print("label", end_label, file=self.output_file)
+
+    def while_node(self, node, label_prefix):
+        start_label = "label_%d" % self.label_count
+        self.label_count += 1
+        end_label = "label_%d" % self.label_count
+        self.label_count += 1
+        print("label", start_label, file=self.output_file)
+        self.traverse(node.children[0], label_prefix)
+        print("jne 1", end_label, file=self.output_file)
+        self.traverse(node.children[1], label_prefix)
+        print("j", start_label, file=self.output_file)
+        print("label", end_label, file=self.output_file)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
