@@ -25,9 +25,9 @@ class Runner:
         ir_generator = IRCodeGenerator()
         ir_generator.generate(self.ast, "ir")
         fp = open("ir.s", 'r')
-        lines = []
-        for line in fp:
-            lines += line
+        lines = fp.readlines()
+        for index in range(0, len(lines)):
+            lines[index] = lines[index].strip().split()
         fp.close
         vm = VM()
         vm.run(lines)
