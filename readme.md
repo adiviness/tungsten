@@ -51,11 +51,11 @@ else:
 ```
 
 Some important things to note:
-    - all indentation must be in increments of 2 spaces
-    - all functions must end with a return statement
-    - types found after a variable name
-    - a variable must be defined with a type before it can be used
-    - variables can currently only have an Int or Bool type
+- all indentation must be in increments of 2 spaces
+- all functions must end with a return statement
+- types found after a variable name
+- a variable must be defined with a type before it can be used
+- variables can currently only have an Int or Bool type
 
 
 
