@@ -111,6 +111,9 @@ class VM:
             self.jne_instr(instr)
         elif instr[0] == "j":
             self.instr_pointer = self.named_memory[instr[1]]
+        else:
+            #print("unknown instr", instr)
+            pass
 
     def jne_instr(self, instr):
         if self.operand_stack.pop() != int(instr[1]):

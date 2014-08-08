@@ -11,11 +11,17 @@ class IRCodeGenerator():
         self.output_file = None
         self.scopes = []
         self.label_count = 0
+        self.generated_code = []
 
-    def generate(self, ast, output_file_prefix):
-        self.output_file = open("%s.s" % output_file_prefix, 'w')
-        self.traverse(ast.root)
-        self.output_file.close()
+    def generate(self, node, output_file_prefix=None):
+        self.generated_code = []
+        self.traverse(node)
+        if output_file_prefix != None:
+            self.output_file = open("%s.s" % output_file_prefix, 'w')
+            for line in self.generated_code:
+                print(line, file=self.output_file)
+            self.output_file.close()
+        return self.generated_code
 
     def traverse(self, node, label_prefix="@Global"):
         if type(node) == BlockNode:
@@ -83,28 +89,28 @@ class IRCodeGenerator():
     def id_node(self, node, label_prefix):
         symbol = self.scopes[-1].resolve(str(node.data))
         if symbol.param_num != None:
-            print("push %s%s" % (symbol.param_num, label_prefix), file=self.output_file)
+            self.generated_code.append("push %s%s" % (symbol.param_num, label_prefix))
         else:
-            print("push %s%s" % (str(node.data), label_prefix), file=self.output_file)
+            self.generated_code.append("push %s%s" % (str(node.data), label_prefix))
 
     def int_node(self, node, label_prefix):
-        print("push", node.data, file=self.output_file)
+        self.generated_code.append("push %s" %  str(node.data))
 
     def bool_node(self, node, label_prefix):
         if node.data == "true":
-            print("push 1", file=self.output_file)
+            self.generated_code.append("push 1")
         else:
-            print("push 0", file=self.output_file)
+            self.generated_code.append("push 0")
             
 
     def def_node(self, node, label_prefix):
         arity = len(node.scope.symbols.keys())
         locals_ = len(node.children[-1].scope.symbols.keys())
-        print("def", "%s%s" % (node.scope.name, label_prefix), arity, locals_, file=self.output_file)
+        self.generated_code.append("def %s%s" % (node.scope.name, label_prefix))
         self.scopes.append(node.scope)
         self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix)
         self.scopes.pop()
-        print("label end_func@%s" % node.scope.name + label_prefix, file=self.output_file)
+        self.generated_code.append("label end_func@%s" % node.scope.name + label_prefix)
 
     def call_node(self, node, label_prefix):
         for child in node.children[1:]:
@@ -115,7 +121,7 @@ class IRCodeGenerator():
         while scope.parent != None:
             scope = scope.parent
             scope_names.append(scope.name)
-        print("call", "@".join(scope_names), file=self.output_file)
+        self.generated_code.append("call %s" % "@".join(scope_names))
 
     def binary_op_node(self, node, label_prefix, operand, associativity):
         if associativity == LEFT:
@@ -124,53 +130,53 @@ class IRCodeGenerator():
         else:
             self.traverse(node.children[1], label_prefix)
             self.traverse(node.children[0], label_prefix)
-        print(operand, file=self.output_file)
+        self.generated_code.append(operand)
         
     def unary_op_node(self, node, label_prefix, operand):
         self.traverse(node.children[0], label_prefix)
-        print(operand, file=self.output_file)
+        self.generated_code.append(operand)
 
     def return_node(self, node, label_prefix):
         self.traverse(node.children[0], label_prefix)
-        print("return", file=self.output_file)
+        self.generated_code.append("return")
 
     def assign_node(self, node, label_prefix):
         if len(node.children) == 3:
-            print("name %s%s" % (str(node.children[0].data), label_prefix), file=self.output_file)
+            self.generated_code.append("name %s%s" % (str(node.children[0].data), label_prefix))
         self.traverse(node.children[-1], label_prefix)
-        print("store %s%s"% (str(node.children[0].data), label_prefix), file=self.output_file)
+        self.generated_code.append("store %s%s"% (str(node.children[0].data), label_prefix))
 
     def if_node(self, node, label_prefix):
         self.traverse(node.children[0], label_prefix)
         if len(node.children) == 2:
             end_label = "label_%d" % self.label_count
             self.label_count += 1
-            print("jne 1", end_label, file=self.output_file)
+            self.generated_code.append("jne 1 %s" % end_label)
             self.traverse(node.children[1], label_prefix)
-            print("label", end_label, file=self.output_file)
+            self.generated_code.append("label %s" % end_label)
         else:
             else_label = "label_%d" % self.label_count
             self.label_count += 1
             end_label = "label_%d" % self.label_count
             self.label_count += 1
-            print("jne 1", else_label, file=self.output_file)
+            self.generated_code.append("jne 1 %s" % else_label)
             self.traverse(node.children[1], label_prefix)
-            print("j", end_label, file=self.output_file)
-            print("label", else_label, file=self.output_file)
+            self.generated_code.append("j %s" % end_label)
+            self.generated_code.append("label %s" % else_label)
             self.traverse(node.children[2], label_prefix)
-            print("label", end_label, file=self.output_file)
+            self.generated_code.append("label %s" % end_label)
 
     def while_node(self, node, label_prefix):
         start_label = "label_%d" % self.label_count
         self.label_count += 1
         end_label = "label_%d" % self.label_count
         self.label_count += 1
-        print("label", start_label, file=self.output_file)
+        self.generated_code.append("label %s" % start_label)
         self.traverse(node.children[0], label_prefix)
-        print("jne 1", end_label, file=self.output_file)
+        self.generated_code.append("jne 1 %s" % end_label)
         self.traverse(node.children[1], label_prefix)
-        print("j", start_label, file=self.output_file)
-        print("label", end_label, file=self.output_file)
+        self.generated_code.append("j %s" % start_label)
+        self.generated_code.append("label %s" % end_label)
 
 
 
