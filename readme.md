@@ -21,7 +21,7 @@ Directory Structure
 Running Tungsten
 -------
 
-The easiest way to run tungsten currently is `python3 runner.py` code will be accepted on stdin and will be interpreted after EOF has been sent. There isn't a repl yet.
+The easiest way to run tungsten currently is `python3 runner.py` code will be accepted on stdin and will be interpreted after EOF has been sent. There is a basic repl that can be run with `python3 runner.py -i` but it's not as stable as using stdin.
 
 Syntax
 -------
@@ -38,4 +38,24 @@ def add(a Int, b Int) Int:
 
 print(add(some_num, x))
 print(not another_var)
+
+count Int = 5
+while count > 0:
+  print(count)
+if count == 0:
+  count = 3
+elif count < 0:
+  count = -1
+else: 
+  count = 2
 ```
+
+Some important things to note:
+    - all indentation must be in increments of 2 spaces
+    - all functions must end with a return statement
+    - types found after a variable name
+    - a variable must be defined with a type before it can be used
+    - variables can currently only have an Int or Bool type
+
+
+
