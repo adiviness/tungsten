@@ -72,7 +72,11 @@ class Runner:
         
 if __name__ == "__main__":
     output_file_prefix = "output"
+    func = Runner.run
     if len(sys.argv) >= 2:
-        output_file_prefix = os.path.splitext(sys.argv[1])[0]
+        if sys.argv[1] == "-i":
+            func = Runner.repl
+        else:
+            output_file_prefix = os.path.splitext(sys.argv[1])[0]
     runner = Runner(output_file_prefix)
-    runner.repl()
+    func(runner)
