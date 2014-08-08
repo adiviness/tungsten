@@ -106,7 +106,7 @@ class IRCodeGenerator():
     def def_node(self, node, label_prefix):
         arity = len(node.scope.symbols.keys())
         locals_ = len(node.children[-1].scope.symbols.keys())
-        self.generated_code.append("def %s%s" % (node.scope.name, label_prefix))
+        self.generated_code.append("def %s%s %d %d" % (node.scope.name, label_prefix, arity, locals_))
         self.scopes.append(node.scope)
         self.traverse(node.children[-1], "@%s" % node.scope.name + label_prefix)
         self.scopes.pop()
