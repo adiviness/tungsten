@@ -109,8 +109,14 @@ class IRCodeGenerator():
     def call_node(self, node, label_prefix):
         for child in node.children[1:]:
             self.traverse(child, label_prefix)
-        print("call", "%s" % node.children[0].data + label_prefix, file=self.output_file)
-        
+        #print("call", "%s" % node.children[0].data + label_prefix, file=self.output_file)
+        scope = self.scopes[-1].find_containing_scope(node.children[0].data)
+        scope_names = [node.children[0].data, scope.name]
+        while scope.parent != None:
+            scope = scope.parent
+            scope_names.append(scope.name)
+        print("call", "@".join(scope_names), file=self.output_file)
+
     def binary_op_node(self, node, label_prefix, operand, associativity):
         if associativity == LEFT:
             self.traverse(node.children[0], label_prefix)
@@ -140,7 +146,7 @@ class IRCodeGenerator():
             end_label = "label_%d" % self.label_count
             self.label_count += 1
             print("jne 1", end_label, file=self.output_file)
-            self.traverse(node.children[1])
+            self.traverse(node.children[1], label_prefix)
             print("label", end_label, file=self.output_file)
         else:
             else_label = "label_%d" % self.label_count
@@ -148,10 +154,10 @@ class IRCodeGenerator():
             end_label = "label_%d" % self.label_count
             self.label_count += 1
             print("jne 1", else_label, file=self.output_file)
-            self.traverse(node.children[1])
+            self.traverse(node.children[1], label_prefix)
             print("j", end_label, file=self.output_file)
             print("label", else_label, file=self.output_file)
-            self.traverse(node.children[2])
+            self.traverse(node.children[2], label_prefix)
             print("label", end_label, file=self.output_file)
 
     def while_node(self, node, label_prefix):

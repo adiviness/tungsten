@@ -33,6 +33,14 @@ class Scope:
         for key in self.symbols.keys():
             print("  ", self.symbols[key], sep='')
 
+    def find_containing_scope(self, name):
+        if name in self.symbols.keys():
+            return self
+        elif self.parent != None:
+            return self.parent.find_containing_scope(name)
+        else:
+            return None
+
 class LocalScope(Scope):
 
     def __init__(self, parent):
