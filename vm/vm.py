@@ -37,6 +37,8 @@ class VM:
                     self.operand_stack.append(self.locals_[-1][int(instr[1][0])]) # TODO should grab full number from push instr
                 else:
                     self.operand_stack.append(self.named_memory[instr[1]])
+            elif '"' in instr[1]:
+                self.operand_stack.append(instr[1])
             else:
                 self.operand_stack.append(int(instr[1]))
         elif instr[0] == "+":

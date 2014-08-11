@@ -76,6 +76,8 @@ class IRCodeGenerator():
             self.if_node(node, label_prefix)
         elif type(node) == WhileNode:
             self.while_node(node, label_prefix)
+        elif type(node) == StringNode:
+            self.string_node(node, label_prefix)
         else:
             for child in node.children:
                 self.traverse(child, label_prefix)
@@ -178,6 +180,11 @@ class IRCodeGenerator():
         self.generated_code.append("j %s" % start_label)
         self.generated_code.append("label %s" % end_label)
 
+    def string_node(self, node, label_prefix):
+        #self.generated_code.append("name %s@%s" % (node.data, label_prefix))
+        self.generated_code.append("push %s" % node.data)
+        #self.generated_code.append("store %s@%s" % (node.data, label_prefix))
+        
 
 
 
