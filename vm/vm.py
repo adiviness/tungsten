@@ -136,7 +136,10 @@ class VM:
 
     def call(self, instr):
         if instr[1] == "print@Global":
-            print(self.operand_stack.pop())
+            if '"' in self.operand_stack[-1]:
+                print(self.operand_stack.pop()[1:-1])
+            else:
+                print(self.operand_stack.pop())
         else:
             local_count = self.function_info[instr[1]][0]
             self.locals_.append(self.operand_stack[0:local_count])
