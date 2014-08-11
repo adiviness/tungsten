@@ -99,7 +99,7 @@ matchers = {
     TokenType.CLASS: r'class', 
     TokenType.STATIC: r'static', 
     TokenType.INSTANCE: r'instance', 
-    TokenType.IN: r'in', 
+    TokenType.IN: r'in ', 
     TokenType.BREAK: r'break', 
     TokenType.CONTINUE: r'continue', 
     TokenType.L_BRACKET: r'\[', 

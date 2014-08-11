@@ -263,6 +263,7 @@ class Parser:
                       TokenType.NIL):
             node = self.val()
         else: 
+            print(self.tokens)
             node = self.unary_op()
             node.give_child(self.val())
         if self.match(TokenType.PLUS,
