@@ -143,6 +143,8 @@ class VM:
         elif instr[1] == "input@Global":
             user_input = input()
             self.operand_stack.append(user_input)
+        elif instr[1] == "exit@Global":
+            exit()
         else:
             local_count = self.function_info[instr[1]][0]
             self.locals_.append(self.operand_stack[0:local_count])
